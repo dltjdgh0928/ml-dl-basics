@@ -5,11 +5,19 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM, Flatten, Dropout
+from tensorflow.keras.layers import Dense, LSTM, Flatten, Bidirectional, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
 
 # 1. 데이터
+timesteps=3
+def split_x(data, timesteps):
+    a = []
+    for i in range(len(data)-timesteps+1):
+        b = data[i:(i+timesteps)]
+        a.append(b)
+    return np.array(a)
+        
 def bring(path):
     data_list = []
     for filename in os.listdir(path):
@@ -23,12 +31,13 @@ def bring(path):
             data = data.reshape(1, -1)
             data = pad_sequences(data, maxlen=maxlen, padding='pre', truncating='pre')
             data = data.reshape(-1, 1)
+            data = split_x(data, timesteps)
+            data = data.reshape(1, -1, timesteps)
             data_list.append(data)
-    all_data = np.array(np.concatenate(data_list, axis=1))
-    all_data = all_data.T
+    all_data = np.array(np.concatenate(data_list, axis=0))
     return all_data
 
-maxlen = 800
+maxlen=800
 
 homo_path = './_data/pp/homo_sapiens/'
 x_homo = bring(homo_path)
@@ -76,19 +85,16 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random
 
 # 2. 모델
 model = Sequential()
+model.add(LSTM(32, input_shape=((maxlen-timesteps+1), timesteps)))
 model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.1))
-model.add(Dense(64))
+model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.1))
-model.add(Dense(64))
+model.add(Dense(256))
 model.add(Dropout(0.1))
-model.add(Dense(64))
+model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.1))
-model.add(Dense(64))
-model.add(Dropout(0.1))
-model.add(Dense(512, activation='relu'))
-model.add(Dropout(0.1))
-model.add(Dense(64))
+model.add(Dense(256))
 model.add(Dropout(0.1))
 model.add(Dense(64))
 model.add(Dropout(0.1))
@@ -114,7 +120,7 @@ print('[ 개체수 ] \nhomo sapiens :', x_homo.shape[0], '\nCulex : ', x_culex.s
 print('\nacc : ', acc)
 
 random_index = np.random.randint(0, x.shape[0])
-x_pred = x[random_index].reshape(1, -1)
+x_pred = x[random_index].reshape(1, -1, timesteps)
 y_pred = np.argmax(model.predict(x_pred), axis=1)
 
 def Speices(x):
@@ -123,5 +129,6 @@ def Speices(x):
         if x == i:
             return index[i]
     return False
+
 
 print('\nRandom Real Speices : ', Speices(np.argmax(y[random_index].reshape(1, -1), axis=1)), '\nPredict Speices : ', Speices(y_pred))
