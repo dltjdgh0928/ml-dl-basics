@@ -50,7 +50,7 @@ for i in range(len(data_list)):
                     max_model = type(k).__name__
                     max_scaler = type(j).__name__
                 print('\n', data_list[i].__name__, type(k).__name__, type(j).__name__,'\nresult : ', model.score(x_test, y_test), '\nr2 : ', r2_score(y_test, model.predict(x_test)))
-        print('\n', data_list[i].__name__, '\nmax_model : ', max_model, '\nmax_scaler : ', max_scaler, '\nmax_acc : ', max_acc)
+        print('\n', data_list[i].__name__, '\nmax_model : ', max_model, '\nmax_scaler : ', max_scaler, '\nmax_r2 : ', max_r2)
     elif i==6:
         x = data_list[i].drop(['count'], axis=1)
         y = data_list[i]['count']
@@ -65,7 +65,7 @@ for i in range(len(data_list)):
                     max_model = type(k).__name__
                     max_scaler = type(j).__name__
                 print('\n', 'ddarung', type(k).__name__, type(j).__name__, '\nresult : ', model.score(x_test, y_test), '\nr2 : ', r2_score(y_test, model.predict(x_test)))
-        print('\n ddarung \nmax_model : ', max_model, '\nmax_scaler : ', max_scaler, '\nmax_acc : ', max_acc)
+        print('\n ddarung \nmax_model : ', max_model, '\nmax_scaler : ', max_scaler, '\nmax_r2 : ', max_r2)
     elif i==7:
         x = data_list[i].drop(['casual', 'registered', 'count'], axis=1)
         y = data_list[i]['count']
@@ -80,4 +80,4 @@ for i in range(len(data_list)):
                     max_model = type(k).__name__
                     max_scaler = type(j).__name__
                 print('\n', 'kaggle', type(k).__name__, type(j).__name__, '\nresult : ', model.score(x_test, y_test), '\nr2 : ', r2_score(y_test, model.predict(x_test)))
-        print('\n kaggle \nmax_model : ', max_model, '\nmax_scaler : ', max_scaler, '\nmax_acc : ', max_acc)
+        print('\n kaggle \nmax_model : ', max_model, '\nmax_scaler : ', max_scaler, '\nmax_r2 : ', max_r2)
