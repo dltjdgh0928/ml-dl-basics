@@ -19,14 +19,13 @@ scaler_list = [MinMaxScaler(), StandardScaler(), MaxAbsScaler(), RobustScaler()]
 classifier_list = [SVC(), RandomForestClassifier(), DecisionTreeClassifier()]
 regressor_list = [RandomForestRegressor(), DecisionTreeRegressor()]
 
-max_model = ''
-max_scaler = ''
-
 for i in range(len(data_list)):
     if i<4:
         x, y = data_list[i](return_X_y=True)
         x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=123)
         max_acc = 0
+        max_model = ''
+        max_scaler = ''
         for j in scaler_list:
             for k in classifier_list:
                 model = make_pipeline(j, k)
@@ -41,6 +40,8 @@ for i in range(len(data_list)):
         x, y = data_list[i](return_X_y=True)
         x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=123)
         max_r2 = 0
+        max_model = ''
+        max_scaler = ''
         for j in scaler_list:
             for k in regressor_list:
                 model = make_pipeline(j, k)
@@ -56,6 +57,8 @@ for i in range(len(data_list)):
         y = data_list[i]['count']
         x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=123)
         max_r2 = 0
+        max_model = ''
+        max_scaler = ''
         for j in scaler_list:
             for k in regressor_list:
                 model = make_pipeline(j, k)
@@ -71,6 +74,8 @@ for i in range(len(data_list)):
         y = data_list[i]['count']
         x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=123)
         max_r2 = 0
+        max_model = ''
+        max_scaler = ''
         for j in scaler_list:
             for k in regressor_list:
                 model = make_pipeline(j, k)
