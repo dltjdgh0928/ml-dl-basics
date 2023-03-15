@@ -8,3 +8,4 @@ f*g : 합성함수
 channels=1 흑백
 channels=3 컬러
 
+parameter 계산
