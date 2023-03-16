@@ -1,6 +1,6 @@
 from tensorflow.keras.datasets import mnist
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Conv2D, Flatten
+from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 from tensorflow.python.keras.callbacks import EarlyStopping
 import numpy as np
@@ -26,26 +26,26 @@ y_train=np.array(pd.get_dummies(y_train,prefix='number'))
 y_test=np.array(pd.get_dummies(y_test,prefix='number'))
 
 
-x_train = x_train
 # print(np.unique(y_train, return_counts=True))
 # print(type(x_train))
 print(x_train)
 
 # 2. 모델구성
 model = Sequential()
-model.add(Conv2D(7, (2,2), input_shape=(28,28,1)))  
-model.add(Conv2D(4, (3,3), activation='relu'))
-model.add(Conv2D(10, (2,2)))
+model.add(Conv2D(64, (2,2), padding='same', input_shape=(28,28,1)))
+
+model.add(MaxPooling2D())
+
+model.add(Conv2D(64, (2,2), padding='valid', activation='relu'))
+model.add(Conv2D(32, 2))
 model.add(Flatten())
-model.add(Dense(32, activation='relu'))
-model.add(Dense(8, activation='relu'))
 model.add(Dense(10, activation='softmax'))
 model.summary()
 
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
 es = EarlyStopping(monitor='val_acc', mode='min', patience=100, verbose=1, restore_best_weights=True)
-hist = model.fit(x_train, y_train, epochs=1000, batch_size=5000, verbose=1, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train, y_train, epochs=10, batch_size=5000, verbose=1, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
 result = model.evaluate(x_test, y_test)
