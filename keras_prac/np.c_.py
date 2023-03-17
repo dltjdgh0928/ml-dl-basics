@@ -32,6 +32,8 @@ import pandas as pd
 
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)
 test_csv = pd.read_csv(path + 'test.csv', index_col=0)
+train_csv['주간통화시간'] = train_csv['주간통화시간'].astype('Float32')
+print(train_csv.dtype())
 
 a = train_csv['주간통화시간'] + train_csv['저녁통화시간'] + train_csv['밤통화시간']
 b = train_csv['주간통화횟수'] + train_csv['저녁통화횟수'] + train_csv['밤통화횟수']
