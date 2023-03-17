@@ -18,4 +18,4 @@ print(train_csv.shape, test_csv.shape)      # (600, 11), (243, 10)
 print(train_csv.columns, test_csv.columns)
 print(train_csv.info(), test_csv.info())
 print(train_csv.describe(), test_csv.describe())
-print(type(train_csv), type(test_csv))
+print(type(train_csv), type(test_csv))SDSD
