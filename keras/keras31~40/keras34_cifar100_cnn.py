@@ -1,4 +1,4 @@
-from tensorflow.keras.datasets import mnist, cifar10
+from tensorflow.keras.datasets import mnist, cifar100
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
@@ -9,7 +9,7 @@ import pandas as pd
 from keras.utils import to_categorical
 
 # 1. 데이터
-(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+(x_train, y_train), (x_test, y_test) = cifar100.load_data()
 
 print(x_train.shape, y_train.shape)
 print(x_test.shape, y_test.shape)
@@ -35,12 +35,12 @@ model.add(MaxPooling2D())
 model.add(Conv2D(8, 2, padding='valid', activation='relu'))
 model.add(Conv2D(8, 2))
 model.add(Flatten())
-model.add(Dense(10, activation='softmax'))
+model.add(Dense(100, activation='softmax'))
 model.summary()
 
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
-es = EarlyStopping(monitor='val_acc', mode='min', verbose=1, restore_best_weights=True, patience=100)
+es = EarlyStopping(monitor='val_acc', mode='max', verbose=1, restore_best_weights=True, patience=100)
 
 import time
 start_time = time.time()
