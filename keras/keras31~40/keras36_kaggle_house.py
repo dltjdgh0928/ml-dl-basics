@@ -69,7 +69,7 @@ model = Model(inputs=input1, outputs=output1)
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['acc'])
 es = EarlyStopping(monitor='val_loss', patience=100, verbose=1, mode='min', restore_best_weights=True)
-hist = model.fit(x_train, y_train, epochs=1000, batch_size=30, verbose=1, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train, y_train, epochs=100, batch_size=30, verbose=1, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -87,7 +87,11 @@ date = datetime.datetime.now()
 date = date.strftime('%m%d_%H%M%S')
 
 y_submit = model.predict(test_csv)
-
+import numpy as np
+import pandas as pd
+y_submit = pd.DataFrame(y_submit)
+y_submit = y_submit.fillna(0)
+y_submit = np.array(y_submit)
 submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
 submission['SalePrice'] = y_submit
 submission.to_csv(path_save + 'kaggle_house_' + date + '.csv')
