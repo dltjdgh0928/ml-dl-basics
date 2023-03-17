@@ -77,6 +77,7 @@ hist = model.fit(x_train, y_train, epochs=1, batch_size=128, validation_split=0.
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
 print('loss : ', loss)
+print(model.predict(x_test))
 
 y_predict = np.round(model.predict(x_test))
 from sklearn.metrics import accuracy_score
