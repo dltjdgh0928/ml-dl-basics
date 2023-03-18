@@ -69,7 +69,7 @@ model = Model(inputs=input1, outputs=output1)
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics=['acc'])
 es = EarlyStopping(monitor='val_loss', patience=100, verbose=1, mode='min', restore_best_weights=True)
-hist = model.fit(x_train, y_train, epochs=100, batch_size=30, verbose=1, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train, y_train, epochs=2000, batch_size=30, verbose=1, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
