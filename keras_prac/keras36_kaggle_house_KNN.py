@@ -3,12 +3,18 @@ from tensorflow.python.keras.layers import Dense, Input, Dropout
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.callbacks import EarlyStopping
+from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
+import numpy as np
+import datetime
+date = datetime.datetime.now()
+date = date.strftime('%m%d_%H%M%S')
 
 # 1. 데이터
 # 1.1 경로, 가져오기
 path = './_data/kaggle_house/'
 path_save = './_save/kaggle_house/'
+filepath = './_save/MCP/kaggle_house/'
+filename = '{epoch:04d}-{val_loss:.2f}.hdf5'
 
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)
 test_csv = pd.read_csv(path + 'test.csv', index_col=0)
@@ -28,12 +34,33 @@ for i in train_csv.columns:
         test_csv[i] = le.fit_transform(test_csv[i])
 print(len(train_csv.columns))
 print(train_csv.info())
-train_csv=train_csv.dropna()
+# train_csv=train_csv.dropna()
 print(train_csv.shape)
 
+# 1.3 결측지 제거
+from sklearn.impute import KNNImputer
+imputer = KNNImputer(n_neighbors=19)
+
+print(train_csv.isnull().sum())
+filled_train = imputer.fit_transform(train_csv)      ### KNNimputer 를 이용한 결측지 제거 ###
+print(filled_train.shape)      #(1328, 10) [dropna()] -> (1459, 10) [KNNimputer] : 값 채워넣기로 행 수가 유지됨
+
+print(filled_train)
+print(type(filled_train))      # <class 'numpy.ndarray'> : 다시 데이터 프레임으로 변환 필요
+
+filled_train = pd.DataFrame(filled_train, columns=train_csv.columns)
+print(type(filled_train))      # <class 'pandas.core.frame.DataFrame'>
+
+print(train_csv)
+
+# print(train_csv.isnull().sum())
+# train_csv = train_csv.dropna()
+# print(train_csv.isnull().sum())
+
+
 # 1.5 x, y 분리
-x = train_csv.drop(['SalePrice'], axis=1)
-y = train_csv['SalePrice']
+x = filled_train.drop(['SalePrice'], axis=1)
+y = filled_train['SalePrice']
 
 print(x.shape)
 
@@ -66,9 +93,13 @@ output1 = Dense(1)(dense5)
 model = Model(inputs=input1, outputs=output1)
 
 # 3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam', metrics=['acc'])
-es = EarlyStopping(monitor='val_loss', patience=100, verbose=1, mode='min', restore_best_weights=True)
-hist = model.fit(x_train, y_train, epochs=2000, batch_size=30, verbose=1, validation_split=0.2, callbacks=[es])
+model.compile(loss='mse', optimizer='adam')
+es = EarlyStopping(monitor='val_loss', patience=10, verbose=1, mode='min', restore_best_weights=True)
+mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, 
+                      filepath=''.join([filepath+'kaggle_house'+ date +'_'+filename]),
+                      save_best_only=True
+)
+hist = model.fit(x_train, y_train, epochs=2000, batch_size=30, verbose=1, validation_split=0.2, callbacks=[es, mcp])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -81,16 +112,11 @@ r2 = r2_score(y_test, y_predict)
 print('r2 : ', r2)
 
 # 4.1 내보내기
-import datetime
-date = datetime.datetime.now()
-date = date.strftime('%m%d_%H%M%S')
+filled_test = imputer.fit_transform(test_csv)      ### KNNimputer 를 이용한 결측지 제거 ###
 
-y_submit = model.predict(test_csv)
-import numpy as np
-import pandas as pd
-y_submit = pd.DataFrame(y_submit)
-y_submit = y_submit.fillna(0)
-y_submit = np.array(y_submit)
+print(filled_test)
+y_submit = model.predict(filled_test)
+
 submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
 submission['SalePrice'] = y_submit
-submission.to_csv(path_save + 'kaggle_house_' + date + '.csv')
+submission.to_csv(path_save + 'kaggle_house_' + date + '_KNN.csv')
