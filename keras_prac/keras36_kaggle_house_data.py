@@ -1039,7 +1039,7 @@ model = Model(inputs=input1, outputs=output1)
 
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-es = EarlyStopping(monitor='val_loss', patience=100, verbose=1, mode='min', restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', patience=50, verbose=1, mode='min', restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, 
                       filepath=''.join([filepath+'kaggle_house'+ date +'_'+filename]),
                       save_best_only=True
@@ -1062,3 +1062,9 @@ y_submit = model.predict(test_csv)
 submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
 submission['SalePrice'] = y_submit
 submission.to_csv(path_save + 'kaggle_house_' + date + '_KNN.csv')
+
+import matplotlib.pyplot as plt
+
+plt.plot(hist.history['loss'], label='loss')
+plt.plot(hist.history['val_loss'], label='val_loss')
+plt.show()
