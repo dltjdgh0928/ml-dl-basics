@@ -957,7 +957,7 @@ test_csv = test_csv.drop(['Alley', 'FireplaceQu', 'PoolQC', 'Fence', 'MiscFeatur
 
 # 1.3 train, test 데이터 합치기 ( 결측치 제거와 원핫을 위해 )
 total_csv = pd.concat([train_csv, test_csv])
-
+print(total_csv.shape)      # (2919, 75)
 
 # 1.4 범주형 결측치 처리 (SimpleImputer)
 obj_total = total_csv[['Utilities', 'Exterior1st', 'Exterior2nd', 'MasVnrType', 'BsmtQual', 'BsmtCond',
@@ -1031,20 +1031,23 @@ input1 = Input(shape=(270,))
 dense1 = Dense(32)(input1)
 drop1 = Dropout(0.2)(dense1)
 dense2 = Dense(64, activation='relu')(drop1)
-dense3 = Dense(64)(dense2)
-dense4 = Dense(32)(dense3)
-dense5 = Dense(8)(dense4)
+drop2 = Dropout(0.2)(dense2)
+dense3 = Dense(64)(drop2)
+drop3 = Dropout(0.2)(dense3)
+dense4 = Dense(32)(drop3)
+drop4 = Dropout(0.2)(dense4)
+dense5 = Dense(8)(drop4)
 output1 = Dense(1)(dense5)
 model = Model(inputs=input1, outputs=output1)
 
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-es = EarlyStopping(monitor='val_loss', patience=50, verbose=1, mode='min', restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', patience=100, verbose=1, mode='min', restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, 
                       filepath=''.join([filepath+'kaggle_house'+ date +'_'+filename]),
                       save_best_only=True
 )
-hist = model.fit(x_train, y_train, epochs=2000, batch_size=30, verbose=1, validation_split=0.2, callbacks=[es, mcp])
+hist = model.fit(x_train, y_train, epochs=2000, batch_size=10, verbose=1, validation_split=0.2, callbacks=[es, mcp])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -1057,7 +1060,7 @@ r2 = r2_score(y_test, y_predict)
 print('r2 : ', r2)
 
 # 4.1 내보내기
-y_submit = model.predict(test_csv)
+y_submit = np.round(model.predict(test_csv), -2)
 
 submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
 submission['SalePrice'] = y_submit
