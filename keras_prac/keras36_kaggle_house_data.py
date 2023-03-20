@@ -960,7 +960,7 @@ total_csv = pd.concat([train_csv, test_csv])
 print(total_csv.shape)      # (2919, 75)
 
 # 1.4 범주형 결측치 처리 (SimpleImputer)
-obj_total = total_csv[['Utilities', 'Exterior1st', 'Exterior2nd', 'MasVnrType', 'BsmtQual', 'BsmtCond',
+obj_total = total_csv[['MSZoning', 'Utilities', 'Exterior1st', 'Exterior2nd', 'MasVnrType', 'BsmtQual', 'BsmtCond',
                       'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2', 'Electrical', 'KitchenQual',
                       'Functional', 'GarageType', 'GarageFinish', 'GarageQual', 'GarageCond', 'SaleType']]
 
@@ -973,7 +973,7 @@ print(obj_total.index)
 
 # print(obj_total)         # SimpleImputer를 이용한 범주형 결측치 제거 ( 최빈값 )
 
-total_csv[['Utilities', 'Exterior1st', 'Exterior2nd', 'MasVnrType', 'BsmtQual', 'BsmtCond',
+total_csv[['MSZoning', 'Utilities', 'Exterior1st', 'Exterior2nd', 'MasVnrType', 'BsmtQual', 'BsmtCond',
                       'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2', 'Electrical', 'KitchenQual',
                       'Functional', 'GarageType', 'GarageFinish', 'GarageQual', 'GarageCond', 'SaleType']] = obj_total
 
@@ -983,19 +983,27 @@ total_csv[['Utilities', 'Exterior1st', 'Exterior2nd', 'MasVnrType', 'BsmtQual', 
 num_total = total_csv[['LotFrontage', 'MasVnrArea', 'BsmtFinSF1', 'BsmtFinSF2', 'BsmtUnfSF', 'TotalBsmtSF',
                        'BsmtFullBath', 'BsmtHalfBath', 'GarageYrBlt', 'GarageCars', 'GarageArea']]
 
+
+print(num_total.isnull().sum())
+
+
 from sklearn.impute import KNNImputer
 imputer = KNNImputer(n_neighbors=19)
 
 num_total = imputer.fit_transform(num_total)      # KNNimputer 를 이용한 숫자형 결측치 제거
 
-print(type(num_total))      # <class 'numpy.ndarray'> : 다시 데이터 프레임으로 변환 필요
+# print(type(num_total))      # <class 'numpy.ndarray'> : 다시 데이터 프레임으로 변환 필요
 
-num_total = pd.DataFrame(num_total)
+# num_total = pd.DataFrame(num_total)
+# print(num_total.isnull().sum())
 
-print(type(num_total))      # <class 'pandas.core.frame.DataFrame'>
-
+# print(type(num_total))      # <class 'pandas.core.frame.DataFrame'>
+# print(num_total.shape)
 total_csv[['LotFrontage', 'MasVnrArea', 'BsmtFinSF1', 'BsmtFinSF2', 'BsmtUnfSF', 'TotalBsmtSF',
                        'BsmtFullBath', 'BsmtHalfBath', 'GarageYrBlt', 'GarageCars', 'GarageArea']] = num_total
+
+# print(total_csv.isnull().sum())
+# print(num_total)
 
 # 1.6 원핫인코딩
 total_csv = pd.get_dummies(total_csv)       # float, int를 제외한 object 항목의 문자열 값 들이 원핫벡터로 변환
@@ -1032,10 +1040,8 @@ input1 = Input(shape=(270,))
 dense1 = Dense(32)(input1)
 drop1 = Dropout(0.2)(dense1)
 dense2 = Dense(64, activation='relu')(drop1)
-drop2 = Dropout(0.2)(dense2)
-dense3 = Dense(64)(drop2)
-drop3 = Dropout(0.2)(dense3)
-dense4 = Dense(32)(drop3)
+dense3 = Dense(64)(dense2)
+dense4 = Dense(32)(dense3)
 drop4 = Dropout(0.2)(dense4)
 dense5 = Dense(8)(drop4)
 output1 = Dense(1)(dense5)
@@ -1048,7 +1054,7 @@ mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1,
                       filepath=''.join([filepath+'kaggle_house'+ date +'_'+filename]),
                       save_best_only=True
 )
-hist = model.fit(x_train, y_train, epochs=1, batch_size=10, verbose=1, validation_split=0.2, callbacks=[es, mcp])
+hist = model.fit(x_train, y_train, epochs=1000, batch_size=10, verbose=1, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -1068,11 +1074,9 @@ print(y_submit.shape)
 submission = pd.read_csv(path + 'sample_submission.csv', index_col = 0)
 print(submission.shape)
 submission['SalePrice'] = y_submit
-print(test_csv[y_submit.shape[0]-1])
-print(y_submit[y_submit.shape[0]-1])
-
-pd.set_option('display.max_row', 1500)
-
 print(y_submit)
+
+# print(test_csv[y_submit.shape[0]-1])
+# print(y_submit[y_submit.shape[0]-1])
 
 submission.to_csv(path_save + 'kaggle_house_' + date + '_KNN.csv')

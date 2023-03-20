@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.models import Sequential, Model
-from tensorflow.python.keras.layers import Dense, Input
+from tensorflow.python.keras.layers import Dense, Input, Conv2D, Flatten
 import numpy as np
 
 # 1. 데이터
@@ -26,41 +26,36 @@ train_csv = train_csv.dropna()      # 결측지 원래 없음
 # 1.4 x, y 분리
 x = train_csv.drop(['Outcome'], axis=1)
 y = train_csv['Outcome']
-
+x = np.array(x)
+x = x.reshape(-1, 4, 2, 1)
+test_csv = np.array(test_csv)
+test_csv = test_csv.reshape(-1, 4, 2, 1)
 # 1.5 train, test 분리
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random_state=777)
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 
-scaler = MinMaxScaler()
+# scaler = MinMaxScaler()
 
-scaler.fit(x_train)
-x_train = scaler.transform(x_train)
-x_test = scaler.transform(x_test)
-test_csv = scaler.transform(test_csv)
+# scaler.fit(x_train)
+# x_train = scaler.transform(x_train)
+# x_test = scaler.transform(x_test)
+# test_csv = scaler.transform(test_csv)
 
 # 2. 모델구성
-# model = Sequential()
-# model.add(Dense(32, input_dim=8, activation='relu'))
-# model.add(Dense(64, activation='relu'))
-# model.add(Dense(128, activation='relu'))
-# model.add(Dense(32, activation='relu'))
-# model.add(Dense(16, activation='relu'))
-# model.add(Dense(1, activation='sigmoid'))
-
-input1 = Input(shape=(9,))
-dense1 = Dense(32, activation='relu')(input1)
-dense2 = Dense(64, activation='relu')(dense1)
-dense3 = Dense(128, activation='relu')(dense2)
-dense4 = Dense(32, activation='relu')(dense3)
-dense5 = Dense(16, activation='relu')(dense4)
-output1 = Dense(1, activation='sigmoid')(dense5)
-model = Model(inputs=input1, outputs=output1)
+model = Sequential()
+model.add(Conv2D(64, 3, padding='same', input_shape=(4, 2, 1)))
+model.add(Conv2D(10, 2, padding='valid'))
+model.add(Flatten())
+model.add(Dense(32, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+model.summary()
 
 # 3. 컴파일, 훈련
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
 from tensorflow.python.keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor = 'val_loss', patience=100, verbose=1, mode='min', restore_best_weights=True)
-model.fit(x_train, y_train, epochs=1000, batch_size=10, validation_split=0.2, verbose=0, callbacks=[es])
+model.fit(x_train, y_train, epochs=10, batch_size=10, validation_split=0.2, verbose=1, callbacks=[es])
 
 # 4. 평가, 예측
 result = model.evaluate(x_test, y_test)

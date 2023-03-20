@@ -50,7 +50,7 @@ model.summary()
 
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
-model.fit(x_train, y_train, epochs=100, batch_size=1000, validation_split=0.2, verbose=1)
+model.fit(x_train, y_train, epochs=10, batch_size=1000, validation_split=0.2, verbose=1)
 
 # 4. 평가, 예측
 result = model.evaluate(x_test, y_test)

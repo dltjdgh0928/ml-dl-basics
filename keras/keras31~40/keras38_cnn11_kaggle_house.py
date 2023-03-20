@@ -1,9 +1,10 @@
 from tensorflow.python.keras.models import Sequential, Model
-from tensorflow.python.keras.layers import Dense, Input, Dropout
+from tensorflow.python.keras.layers import Dense, Input, Dropout, Conv2D, Flatten
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.callbacks import EarlyStopping
+import numpy as np
 
 # 1. 데이터
 # 1.1 경로, 가져오기
@@ -36,39 +37,34 @@ x = train_csv.drop(['SalePrice'], axis=1)
 y = train_csv['SalePrice']
 
 print(x.shape)
+x = np.array(x)
+x = x.reshape(-1, 79, 1, 1)
 
+test_csv = np.array(test_csv)
+test_csv = test_csv.reshape(-1, 79, 1, 1)
 # 1.6 train, test 분리
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random_state=123, shuffle=True)
 
 # 1.7 Scaler
-scaler = MinMaxScaler()
-x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)
-test_csv = scaler.transform(test_csv)
+# scaler = MinMaxScaler()
+# x_train = scaler.fit_transform(x_train)
+# x_test = scaler.transform(x_test)
+# test_csv = scaler.transform(test_csv)
 
 # 2. 모델구성
-# model = Sequential()
-# model.add(Dense(32, input_dim=8))
-# model.add(Dense(64))
-# model.add(Dense(64))
-# model.add(Dense(32))
-# model.add(Dense(8))
-# model.add(Dense(1))
-
-input1 = Input(shape=(79,))
-dense1 = Dense(32)(input1)
-drop1 = Dropout(0.2)(dense1)
-dense2 = Dense(64, activation='relu')(drop1)
-dense3 = Dense(64)(dense2)
-dense4 = Dense(32)(dense3)
-dense5 = Dense(8)(dense4)
-output1 = Dense(1)(dense5)
-model = Model(inputs=input1, outputs=output1)
+model = Sequential()
+model.add(Conv2D(64, (3,1), padding='same', input_shape=(79, 1, 1)))
+model.add(Conv2D(10, 2, padding='same'))
+model.add(Flatten())
+model.add(Dense(32, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='relu'))
+model.summary()
 
 # 3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam', metrics=['acc'])
+model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', patience=100, verbose=1, mode='min', restore_best_weights=True)
-hist = model.fit(x_train, y_train, epochs=2000, batch_size=30, verbose=1, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train, y_train, epochs=10, batch_size=30, verbose=1, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
