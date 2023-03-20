@@ -969,6 +969,7 @@ from sklearn.impute import SimpleImputer
 imp1 = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
 
 obj_total = pd.DataFrame(imp1.fit_transform(obj_total), columns=obj_total.columns, index=obj_total.index)
+print(obj_total.index)
 
 # print(obj_total)         # SimpleImputer를 이용한 범주형 결측치 제거 ( 최빈값 )
 
@@ -1047,7 +1048,7 @@ mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1,
                       filepath=''.join([filepath+'kaggle_house'+ date +'_'+filename]),
                       save_best_only=True
 )
-hist = model.fit(x_train, y_train, epochs=2000, batch_size=10, verbose=1, validation_split=0.2, callbacks=[es, mcp])
+hist = model.fit(x_train, y_train, epochs=1, batch_size=10, verbose=1, validation_split=0.2, callbacks=[es, mcp])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -1061,13 +1062,17 @@ print('r2 : ', r2)
 
 # 4.1 내보내기
 y_submit = np.round(model.predict(test_csv), -2)
+print(test_csv.shape)
+print(y_submit.shape)
 
-submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
+submission = pd.read_csv(path + 'sample_submission.csv', index_col = 0)
+print(submission.shape)
 submission['SalePrice'] = y_submit
+print(test_csv[y_submit.shape[0]-1])
+print(y_submit[y_submit.shape[0]-1])
+
+pd.set_option('display.max_row', 1500)
+
+print(y_submit)
+
 submission.to_csv(path_save + 'kaggle_house_' + date + '_KNN.csv')
-
-import matplotlib.pyplot as plt
-
-plt.plot(hist.history['loss'], label='loss')
-plt.plot(hist.history['val_loss'], label='val_loss')
-plt.show()
