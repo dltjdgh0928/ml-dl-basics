@@ -1,0 +1,26 @@
+CNN
+# (batch_size, rows, columns, channels)
+model.add(Conv2D(7, (2,2), input_shape=(8,8,1)))
+(batch_size, rows, columns, channels)
+(kernal_size + bias)*input*output
+(2*2+1)*1*7
+
+
+DNN
+model.add(Dense(64, input_shape=(784,)))
+(784+1)*64
+
+
+RNN
+# [batch, timesteps, feature]
+model.add(SimpleRNN(10, input_shape=(5, 1)))
+units * ( feature + bias + units ) = params
+(10*10) + (1*10) + 10 = 120
+
+
+LSTM
+# [batch, timesteps, feature]
+model.add(LSTM(10, input_shape=(5, 1)))
+4 * units * ( feature + bias + units ) = params
+4 * {(10*10) + (1*10) + 10} = 480
+RNN의 4배

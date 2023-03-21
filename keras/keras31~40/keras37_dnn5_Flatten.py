@@ -1,6 +1,6 @@
 from keras.datasets import mnist
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Flatten
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler
@@ -17,23 +17,24 @@ import matplotlib.pyplot as plt
 # print(x_train.shape, y_train.shape)     # (60000, 28, 28) (60000,)
 # print(x_test.shape, y_test.shape)       # (10000, 28, 28) (10000,)
 
-x_train = x_train.reshape(60000, -1)
-x_test = x_test.reshape(10000, -1)
+# x_train = x_train.reshape(60000, -1)
+# x_test = x_test.reshape(10000, -1)
 
-scaler = MinMaxScaler()
-x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)
+# scaler = MinMaxScaler()
+# x_train = scaler.fit_transform(x_train)
+# x_test = scaler.transform(x_test)
 
 y_train = np.array(pd.get_dummies(y_train))
 y_test = np.array(pd.get_dummies(y_test))
 
 # 2. 모델구성
 model = Sequential()
-model.add(Dense(64, input_shape=(784,)))
-# model.add(Dense(64, input_shape=(28*28,)))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(32, activation='relu'))
-model.add(Dense(16, activation='relu'))
+model.add(Dense(10, input_shape=(28, 28)))
+model.add(Dense(9, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Flatten())
+
+model.add(Dense(7, activation='relu'))
 model.add(Dense(10, activation='softmax'))
 model.summary()
 
