@@ -11,19 +11,19 @@ import pandas as pd
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
 ########### 실습 #############
-scaler=MinMaxScaler()
-x_train = x_train.reshape(-1,1)
+# scaler=MinMaxScaler()
+# x_train = x_train.reshape(-1,1)
 # print(x_train.shape)
 # print((x_train.shape[0]//(28*28)))
-x_train = scaler.fit_transform(x_train)
-x_test = x_test.reshape(-1,1)
-x_test = scaler.transform(x_test)
+# x_train = scaler.fit_transform(x_train)
+# x_test = x_test.reshape(-1,1)
+# x_test = scaler.transform(x_test)
 
 x_train = x_train.reshape(60000, 28, 28, 1)
 x_test = x_test.reshape(10000, 28, 28, 1)
 
-y_train=np.array(pd.get_dummies(y_train,prefix='number'))
-y_test=np.array(pd.get_dummies(y_test,prefix='number'))
+y_train=np.array(pd.get_dummies(y_train))
+y_test=np.array(pd.get_dummies(y_test))
 
 
 x_train = x_train
