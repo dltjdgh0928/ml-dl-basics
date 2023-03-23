@@ -29,21 +29,21 @@ y = bbb[:, 4:5]     # (6, 1)
 print(x.shape)      # (96, 4)
 print(y.shape)      # (96, 1)
 
-a = split_x(x_predict, timesteps)
+a = split_x(x_predict, 4)
 print(a)
 
-a1 = a[0:6 , 0:4]
-print(a1)
+# a1 = a[0:6 , 0:4]
+# print(a1)
 
-print(x)
-print(y)
+# print(x)
+# print(y)
 x = x.reshape(96, 4, 1)
 
-a1 = a1.reshape(6, 4, 1)
+a1 = a.reshape(7, 4, 1)
 
 # 2. 모델
 model = Sequential()
-model.add(LSTM(64, input_shape=(4, 1), activation='linear', recurrent_activation='tanh'))
+model.add(LSTM(64, input_shape=(4, 1), activation='tanh', recurrent_activation='linear'))
 model.add(Dense(16))
 model.add(Dense(16))
 model.add(Dense(16))
@@ -54,11 +54,10 @@ model.add(Dense(1))
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='loss', mode='min', patience=100, restore_best_weights=True)
-model.fit(x, y, epochs=100, callbacks=[es])
+model.fit(x, y, epochs=1000, callbacks=[es])
 
 # 4. 평가, 예측
 loss = model.evaluate(x, y)
-a1 = a1.reshape(6, 4, 1)
 
 result = model.predict(a1)
 print('loss : ', loss)
