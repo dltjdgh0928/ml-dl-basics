@@ -24,11 +24,17 @@ bbb = split_x(dataset, timesteps)
 print(bbb)
 print(bbb.shape)
 x = bbb[:, :-1]
-y = bbb[:, 4:5]     # (6, 1)
+# y = bbb[:, 4:5]     # (96, 1)
+# y = bbb[:, 4]     # (96, )
+# y = bbb[:, -1]     # (96, )
+# y = bbb[:, 4:]     # (96, 1)
+# y = bbb[:, -1:]     # (96, 1)
+y = bbb[:, -1:5]     # (96, 1)
+
 
 print(x.shape)      # (96, 4)
 print(y.shape)      # (96, 1)
-
+print(y)
 a = split_x(x_predict, 4)
 print(a)
 
