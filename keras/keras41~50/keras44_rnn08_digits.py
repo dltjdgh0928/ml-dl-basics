@@ -1,6 +1,6 @@
 from sklearn.datasets import load_digits
 from tensorflow.python.keras.models import Sequential, Model
-from tensorflow.python.keras.layers import Dense, Input, Conv2D, Flatten
+from tensorflow.python.keras.layers import Dense, Input, Conv2D, Flatten, SimpleRNN
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import numpy as np
@@ -37,9 +37,7 @@ print(np.unique(y_train, return_counts=True))
 
 # 2. 모델구성
 model = Sequential()
-model.add(Conv2D(64, input_shape=(8, 8)))
-model.add(Conv2D(10, 2, padding='same'))
-model.add(Flatten())
+model.add(SimpleRNN(64, input_shape=(8, 8)))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(8, activation='relu'))
 model.add(Dense(10, activation='softmax'))
