@@ -36,10 +36,10 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random
 
 # 2. 모델구성
 model = Sequential()
-model.add(Conv2D(64, input_shape=(13, 1)))
+model.add(LSTM(64, input_shape=(13, 1)))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(8, activation='relu'))
-model.add(Dense(3, activation='softmax'))
+model.add(Dense(7, activation='softmax'))
 model.summary()
 
 # 3. 컴파일, 훈련

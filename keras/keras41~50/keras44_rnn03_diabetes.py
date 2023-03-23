@@ -10,6 +10,8 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, Ro
 datasets = load_diabetes()
 x = datasets.data
 y = datasets.target
+
+
 print(x.shape, y.shape)
 x = x.reshape(442, 5, 2)
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random_state=123, shuffle=True)

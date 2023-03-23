@@ -960,6 +960,16 @@ total_csv = pd.concat([train_csv, test_csv])
 print(total_csv.shape)      # (2919, 75)
 
 # 1.4 범주형 결측치 처리 (SimpleImputer)
+obj_total=[]
+for i in total_csv.columns:
+    if total_csv[i].dtype=='object':
+        obj_total.append(total_csv[i])
+
+print(obj_total)
+obj_total = np.array(obj_total)
+obj_total = obj_total.reshape(2919, 38)
+print(obj_total.shape)
+print(obj_total)
 obj_total = total_csv[['MSZoning', 'Utilities', 'Exterior1st', 'Exterior2nd', 'MasVnrType', 'BsmtQual', 'BsmtCond',
                       'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2', 'Electrical', 'KitchenQual',
                       'Functional', 'GarageType', 'GarageFinish', 'GarageQual', 'GarageCond', 'SaleType']]
