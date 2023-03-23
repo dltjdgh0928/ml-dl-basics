@@ -44,7 +44,7 @@ es = EarlyStopping(monitor='val_acc', mode='max', verbose=1, restore_best_weight
 import time
 start_time = time.time()
 
-hist = model.fit(x_train, y_train, epochs=10, batch_size=5000, verbose=1, callbacks=[es], validation_split=0.2)
+hist = model.fit(x_train, y_train, epochs=10, batch_size=128, verbose=1, callbacks=[es], validation_split=0.2)
 
 end_time = time.time()
 print("training time : ", round(end_time - start_time, 2))
