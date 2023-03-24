@@ -31,10 +31,10 @@ scaler=MinMaxScaler()
 scaler.fit(x_train)
 x=scaler.transform(x)
 
-def split_x(dataset, timesteps):
+def split_x(a, b):
     aaa=[]
-    for i in range(len(dataset) - timesteps):
-        subset = dataset[i : (i + timesteps)]
+    for i in range(len(a) - b):
+        subset = a[i : (i + b)]
         aaa.append(subset)
     return np.array(aaa)
 
@@ -61,7 +61,7 @@ model.summary()
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', patience=100, verbose=1, mode='min', restore_best_weights=True)
-hist = model.fit(x_train_split, y_train_split, epochs=1, batch_size=128, verbose=1, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train_split, y_train_split, epochs=100, batch_size=128, verbose=1, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test_split, y_test_split)
