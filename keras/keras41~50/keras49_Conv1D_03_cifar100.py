@@ -32,8 +32,11 @@ y_test = to_categorical(y_test)
 
 # 2. 모델구성
 model = Sequential()
-model.add(Conv1D(8, 2, input_shape=(96, 32)))
+model.add(Conv1D(128, 2, input_shape=(96, 32)))
 model.add(Flatten())
+model.add(Dense(1280))
+model.add(Dense(64))
+model.add(Dense(32))
 model.add(Dense(100, activation='softmax'))
 model.summary()
 
@@ -44,7 +47,7 @@ es = EarlyStopping(monitor='val_acc', mode='max', verbose=1, restore_best_weight
 import time
 start_time = time.time()
 
-hist = model.fit(x_train, y_train, epochs=10, batch_size=128, verbose=1, callbacks=[es], validation_split=0.2)
+hist = model.fit(x_train, y_train, epochs=1000, batch_size=20000, verbose=1, callbacks=[es], validation_split=0.2)
 
 end_time = time.time()
 print("training time : ", round(end_time - start_time, 2))
