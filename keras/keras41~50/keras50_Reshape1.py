@@ -1,6 +1,6 @@
 from tensorflow.keras.datasets import mnist
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, SimpleRNN, Conv1D, MaxPooling2D, Reshape
+from tensorflow.python.keras.layers import LSTM, Dense, Conv2D, Flatten, SimpleRNN, Conv1D, MaxPooling2D, Reshape
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 from tensorflow.python.keras.callbacks import EarlyStopping
 import numpy as np
@@ -42,10 +42,12 @@ model.add(Conv2D(10, 3))
 model.add(MaxPooling2D())
 model.add(Flatten())        # (N, 250)
 model.add(Reshape(target_shape=(25, 10)))
-model.add(Conv1D(10, 3))
-model.add(LSTM)
-# model.add(Dense(100))
-# model.add(Dense(10, activation='softmax'))
+model.add(Conv1D(10, 3, padding='same'))
+model.add(LSTM(784))
+model.add(Reshape(target_shape=(28, 28, 1)))
+model.add(Conv2D(32, (3, 3)))
+model.add(Flatten())
+model.add(Dense(10, activation='softmax'))
 
 
 model.summary()
