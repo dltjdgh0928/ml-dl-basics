@@ -28,7 +28,7 @@ x_test = scaler.transform(x_test)
 
 print(np.min(x_test), np.max(x_test))     # 0.0 1.0
 
-'''
+
 # 2. 모델
 # model = Sequential()
 # # model.add(Dense(1, input_dim=13))
@@ -55,7 +55,7 @@ es = EarlyStopping(monitor='val_loss', patience=1000, mode='min', verbose=1, res
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath='./_save/MCP/keras27_ModelCheckPoint1.hdf5')
 
 model.fit(x_train, y_train, epochs=10000, callbacks=(es, mcp), validation_split=0.2)
-'''
+
 model = load_model('./_save/MCP/keras27_ModelCheckPoint1.hdf5')
 
 # 4. 평가, 예측

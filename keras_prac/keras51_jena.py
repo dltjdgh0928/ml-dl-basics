@@ -42,13 +42,14 @@ def split_x(a, b):
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=False)
 x_test, x_predict, y_test, y_predict = train_test_split(x_test, y_test, train_size=2/3, shuffle=False)
 
-x_train_split = split_x(x_train, 10)
-x_test_split = split_x(x_test, 10)
-x_predict_split = split_x(x_predict, 10)
+timesteps = 10
+x_train_split = split_x(x_train, timesteps)
+x_test_split = split_x(x_test, timesteps)
+x_predict_split = split_x(x_predict, timesteps)
 
-y_train_split = y_train[10:]
-y_test_split = y_test[10:]
-y_predict_split = y_predict[10:]
+y_train_split = y_train[timesteps:]
+y_test_split = y_test[timesteps:]
+y_predict_split = y_predict[timesteps:]
 
 
 # 2. 모델구성

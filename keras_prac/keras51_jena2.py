@@ -39,8 +39,8 @@ x_test_split = split_x(x_test, timesteps)
 x_predict_split = split_x(x_predict, timesteps)
 
 y_train_split = y_train[(timesteps+1):]
-y_test_split = y_test[(timesteps+1):]
-y_predict_split = y_predict[(timesteps+1):]
+y_test_split = y_test[timesteps+1:]
+y_predict_split = y_predict[11:]
 
 # 2. 모델구성
 model = Sequential()
@@ -50,10 +50,10 @@ model.add(Dense(1))
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam', metrics='mae')
 es = EarlyStopping(monitor='val_loss', patience=10, mode='auto', restore_best_weights=True)
-model.fit(x_train_split, y_train_split, epochs=5, batch_size=32, validation_split=0.2, callbacks=[es])
+model.fit(x_train_split, y_train_split, epochs=1, batch_size=128, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
-loss = model.evaluate(x_test_split, y_test_split)
+loss = model.evaluate(x_test_split, y_test_split, verbose=1, batch_size=64)
 print('loss : ', loss)
 
 predict = model.predict(x_predict_split)
