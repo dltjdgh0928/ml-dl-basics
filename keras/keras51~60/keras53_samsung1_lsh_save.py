@@ -94,7 +94,6 @@ hyundai_x_train = scaler.transform(hyundai_x_train)
 hyundai_x_test = scaler.transform(hyundai_x_test)
 
 timesteps = 20
-
 samsung_x_train_split = split_x(samsung_x_train, timesteps)
 samsung_x_test_split = split_x(samsung_x_test, timesteps)
 hyundai_x_train_split = split_x(hyundai_x_train, timesteps)
@@ -130,12 +129,12 @@ merge2 = Dense(200, activation='relu', name='mg2')(merge1)
 merge3 = Dense(300, activation='relu', name='mg3')(merge2)
 hidden_output = Dense(100, name='last')(merge3)
 
-# 2.5 분기1
+# 2.4 분기1
 bungi1 = Dense(10, activation='selu', name='bg1')(hidden_output)
 bungi2 = Dense(10, name='bg2')(bungi1)
 last_output1 = Dense(1, name='last1')(bungi2)
 
-# 2.6 분기2
+# 2.5 분기2
 last_output2 = Dense(1, activation='linear', name='last2')(hidden_output)
 model = Model(inputs=[input1, input2], outputs=[last_output1, last_output2])
 
@@ -151,6 +150,11 @@ model.save(path_save + 'keras53_samsung2_lsh.h5')
 # 4. 평가, 예측
 loss = model.evaluate([samsung_x_test_split, hyundai_x_test_split], [samsung_y_test_split, hyundai_y_test_split])
 print('loss : ', loss)
+
+samsung_x_predict = samsung_x_train[105:125, :]
+print(samsung_x_predict.shape)
+
+
 
 result = model.predict([samsung_x_test_split, hyundai_x_test_split])
 

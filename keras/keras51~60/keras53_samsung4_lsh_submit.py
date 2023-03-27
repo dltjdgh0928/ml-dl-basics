@@ -57,9 +57,9 @@ print(datasets_samsung.describe(), datasets_hyundai.describe())
 print(type(datasets_samsung), type(datasets_hyundai))
 
 samsung_x = np.array(datasets_samsung.drop(['전일비', '시가'], axis=1))
-samsung_y = np.array(datasets_samsung['종가'])
+samsung_y = np.array(datasets_samsung['시가'])
 hyundai_x = np.array(datasets_hyundai.drop(['전일비', '시가'], axis=1))
-hyundai_y = np.array(datasets_hyundai['종가'])
+hyundai_y = np.array(datasets_hyundai['시가'])
 
 samsung_x = samsung_x[:180, :]
 samsung_y = samsung_y[:180]
