@@ -160,4 +160,11 @@ r2_2 = r2_score(hyundai_y_test_split, result[0])
 print('r2_1 : ', r2_1)
 print('r2_2 : ', r2_2)
 
-print(result)
+result = np.array(result)
+print(result.shape)
+result = result.reshape(2, 35)
+result = result.T
+print(result.shape)
+
+last_result = np.round(result[34, 0], 2)
+print(" 내일의 종가는 바로바로 : ", last_result)
