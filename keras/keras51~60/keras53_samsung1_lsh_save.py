@@ -66,6 +66,11 @@ samsung_y = samsung_y[:1200]
 hyundai_x = hyundai_x[:1200, :]
 hyundai_y = hyundai_y[:1200]
 
+samsung_x = np.flip(samsung_x, axis=1)
+samsung_y = np.flip(samsung_y)
+hyundai_x = np.flip(hyundai_x, axis=1)
+hyundai_y = np.flip(hyundai_y)
+
 print(samsung_x.shape, samsung_y.shape)
 print(hyundai_x.shape, hyundai_y.shape)
 
@@ -134,9 +139,9 @@ model.summary()
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', mode='min', patience=30, restore_best_weights=True)
-hist = model.fit([samsung_x_train_split, hyundai_x_train_split], [samsung_y_train_split, hyundai_y_train_split], epochs=10, batch_size=64, validation_split=0.2, callbacks=[es])
+hist = model.fit([samsung_x_train_split, hyundai_x_train_split], [samsung_y_train_split, hyundai_y_train_split], epochs=100, batch_size=64, validation_split=0.2, callbacks=[es])
 
-model.save(path_save + 'keras53_samsung2_yys.h5')
+model.save(path_save + 'keras53_samsung2_lsh.h5')
 
 # 4. 평가, 예측
 loss = model.evaluate([samsung_x_test_split, hyundai_x_test_split], [samsung_y_test_split, hyundai_y_test_split])
@@ -150,4 +155,4 @@ r2_2 = r2_score(hyundai_y_test_split, result[0])
 print('r2_1 : ', r2_1)
 print('r2_2 : ', r2_2)
 
-print()
+print(result)
