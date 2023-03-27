@@ -37,7 +37,7 @@ def RMSE(x,y):
 
 def split_x(dt, st):
     a = []
-    for i in range(len(dt)-st):
+    for i in range(len(dt)-st-1):
         b = dt[i:(i+st)]
         a.append(b)
     return np.array(a)
@@ -100,10 +100,10 @@ samsung_x_test_split = split_x(samsung_x_test, timesteps)
 hyundai_x_train_split = split_x(hyundai_x_train, timesteps)
 hyundai_x_test_split = split_x(hyundai_x_test, timesteps)
 
-samsung_y_train_split = samsung_y_train[timesteps:]
-samsung_y_test_split = samsung_y_test[timesteps:]
-hyundai_y_train_split = hyundai_y_train[timesteps:]
-hyundai_y_test_split = hyundai_y_test[timesteps:]
+samsung_y_train_split = samsung_y_train[(timesteps+1):]
+samsung_y_test_split = samsung_y_test[(timesteps+1):]
+hyundai_y_train_split = hyundai_y_train[(timesteps+1):]
+hyundai_y_test_split = hyundai_y_test[(timesteps+1):]
 
 print(samsung_x_train_split.shape)      # (820, 20, 14)
 print(hyundai_x_train_split.shape)      # (820, 20, 14)
@@ -162,9 +162,9 @@ print('r2_2 : ', r2_2)
 
 result = np.array(result)
 print(result.shape)
-result = result.reshape(2, 35)
+result = result.reshape(2, 34)
 result = result.T
 print(result.shape)
 
-last_result = np.round(result[34, 0], 2)
+last_result = np.round(result[33, 0], 2)
 print("이틀뒤의 시가는 바로바로 : ", last_result)

@@ -167,4 +167,4 @@ result = result.T
 print(result.shape)
 
 last_result = np.round(result[34, 0], 2)
-print(" 내일의 종가는 바로바로 : ", last_result)
+print("내일의 종가는 바로바로 : ", last_result)
