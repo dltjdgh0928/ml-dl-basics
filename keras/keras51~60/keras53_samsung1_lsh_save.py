@@ -61,10 +61,15 @@ samsung_y = np.array(datasets_samsung['종가'])
 hyundai_x = np.array(datasets_hyundai.drop(['전일비', '종가'], axis=1))
 hyundai_y = np.array(datasets_hyundai['종가'])
 
-samsung_x = samsung_x[:1200, :]
-samsung_y = samsung_y[:1200]
-hyundai_x = hyundai_x[:1200, :]
-hyundai_y = hyundai_y[:1200]
+samsung_x = samsung_x[:180, :]
+samsung_y = samsung_y[:180]
+hyundai_x = hyundai_x[:180, :]
+hyundai_y = hyundai_y[:180]
+
+# samsung_x = samsung_x[:1200, :]
+# samsung_y = samsung_y[:1200]
+# hyundai_x = hyundai_x[:1200, :]
+# hyundai_y = hyundai_y[:1200]
 
 samsung_x = np.flip(samsung_x, axis=1)
 samsung_y = np.flip(samsung_y)
@@ -84,7 +89,7 @@ samsung_x_train, samsung_x_test, samsung_y_train, samsung_y_test, hyundai_x_trai
 
 scaler = MinMaxScaler()
 samsung_x_train = scaler.fit_transform(samsung_x_train)
-samsung_x_test = scaler.transform(samsung_x_test)
+samsung_x_test= scaler.transform(samsung_x_test)
 hyundai_x_train = scaler.transform(hyundai_x_train)
 hyundai_x_test = scaler.transform(hyundai_x_test)
 
