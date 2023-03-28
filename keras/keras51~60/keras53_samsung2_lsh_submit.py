@@ -47,8 +47,8 @@ def split_x(dt, st):
 path = './_data/시험/'
 path_save = './_save/samsung/'
 
-datasets_samsung = pd.read_csv(path + '삼성전자 주가2.csv', index_col=0, encoding='cp949')
-datasets_hyundai = pd.read_csv(path + '현대자동차.csv', index_col=0, encoding='cp949')
+datasets_samsung = pd.read_csv(path + '삼성전자 주가3.csv', index_col=0, encoding='cp949')
+datasets_hyundai = pd.read_csv(path + '현대자동차2.csv', index_col=0, encoding='cp949')
 
 print(datasets_samsung.shape, datasets_hyundai.shape)
 print(datasets_samsung.columns, datasets_hyundai.columns)
@@ -88,7 +88,7 @@ samsung_x_test= scaler.transform(samsung_x_test)
 hyundai_x_train = scaler.transform(hyundai_x_train)
 hyundai_x_test = scaler.transform(hyundai_x_test)
 
-timesteps = 15
+timesteps = 25
 
 samsung_x_train_split = split_x(samsung_x_train, timesteps)
 samsung_x_test_split = split_x(samsung_x_test, timesteps)

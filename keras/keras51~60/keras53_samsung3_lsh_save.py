@@ -47,8 +47,8 @@ def split_x(dt, st):
 path = './_data/시험/'
 path_save = './_save/samsung/'
 
-datasets_samsung = pd.read_csv(path + '삼성전자 주가2.csv', index_col=0, encoding='cp949')
-datasets_hyundai = pd.read_csv(path + '현대자동차.csv', index_col=0, encoding='cp949')
+datasets_samsung = pd.read_csv(path + '삼성전자 주가3.csv', index_col=0, encoding='cp949')
+datasets_hyundai = pd.read_csv(path + '현대자동차2.csv', index_col=0, encoding='cp949')
 
 print(datasets_samsung.shape, datasets_hyundai.shape)
 print(datasets_samsung.columns, datasets_hyundai.columns)
@@ -57,9 +57,9 @@ print(datasets_samsung.describe(), datasets_hyundai.describe())
 print(type(datasets_samsung), type(datasets_hyundai))
 
 samsung_x = np.array(datasets_samsung.drop(['전일비', '시가'], axis=1))
-samsung_y = np.array(datasets_samsung['종가'])
+samsung_y = np.array(datasets_samsung['시가'])
 hyundai_x = np.array(datasets_hyundai.drop(['전일비', '시가'], axis=1))
-hyundai_y = np.array(datasets_hyundai['종가'])
+hyundai_y = np.array(datasets_hyundai['시가'])
 
 samsung_x = samsung_x[:180, :]
 samsung_y = samsung_y[:180]
@@ -154,4 +154,4 @@ hyundai_x_predict = hyundai_x_predict.reshape(1, timesteps, 14)
 
 predict_result = model.predict([samsung_x_predict, hyundai_x_predict])
 
-print("이틀뒤의 시가는 바로바로 : ", np.round(predict_result[0],2))
+print("이틀뒤의 시가는 바로바로 : ", np.round(predict_result[1],2))
