@@ -139,8 +139,7 @@ model.summary()
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', mode='min', patience=30, restore_best_weights=True)
-hist = model.fit([samsung_x_train_split, hyundai_x_train_split], [samsung_y_train_split, hyundai_y_train_split], epochs=100, batch_size=8,
-                 validation_data=([samsung_x_test_split, hyundai_x_test_split], [samsung_y_test_split, hyundai_y_test_split]), callbacks=[es])
+hist = model.fit([samsung_x_train_split, hyundai_x_train_split], [samsung_y_train_split, hyundai_y_train_split], epochs=100, batch_size=8, validation_split=0.2, callbacks=[es])
 
 model.save(path_save + 'keras53_samsung4_lsh.h5')
 
