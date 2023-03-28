@@ -91,7 +91,7 @@ samsung_x_test= scaler.transform(samsung_x_test)
 hyundai_x_train = scaler.transform(hyundai_x_train)
 hyundai_x_test = scaler.transform(hyundai_x_test)
 
-timesteps = 20
+timesteps = 15
 samsung_x_train_split = split_x(samsung_x_train, timesteps)
 samsung_x_test_split = split_x(samsung_x_test, timesteps)
 hyundai_x_train_split = split_x(hyundai_x_train, timesteps)
@@ -109,27 +109,27 @@ print(hyundai_x_train_split.shape)
 # 2.1 모델1
 input1 = Input(shape=(timesteps, 14))
 dense1 = LSTM(100, activation='relu', name='samsung1')(input1)
-dense2 = Dense(200, activation='relu', name='samsung2')(dense1)
-dense3 = Dense(300, activation='relu', name='samsung3')(dense2)
-output1 = Dense(110, activation='relu', name='samsung4')(dense3)
+dense2 = Dense(100, activation='relu', name='samsung2')(dense1)
+dense3 = Dense(100, activation='relu', name='samsung3')(dense2)
+output1 = Dense(100, activation='relu', name='samsung4')(dense3)
 
 # 2.2 모델2
 input2 = Input(shape=(timesteps, 14))
 dense11 = LSTM(100, name='huyndai1')(input2)
 dense12 = Dense(100, name='huyndai2')(dense11)
-dense13 = Dense(100, name='huyndai3')(dense12)
+dense13 = Dense(000, name='huyndai3')(dense12)
 dense14 = Dense(100, name='huyndai4')(dense13)
-output2 = Dense(110, name='output2')(dense14)
+output2 = Dense(100, name='output2')(dense14)
 
 # 2.3 머지
 merge1 = Concatenate(name='mg1')([output1, output2])
-merge2 = Dense(200, activation='relu', name='mg2')(merge1)
-merge3 = Dense(300, activation='relu', name='mg3')(merge2)
+merge2 = Dense(100, activation='relu', name='mg2')(merge1)
+merge3 = Dense(100, activation='relu', name='mg3')(merge2)
 hidden_output = Dense(100, name='last')(merge3)
 
 # 2.4 분기1
-bungi1 = Dense(10, activation='selu', name='bg1')(hidden_output)
-bungi2 = Dense(10, name='bg2')(bungi1)
+bungi1 = Dense(30, activation='selu', name='bg1')(hidden_output)
+bungi2 = Dense(30, name='bg2')(bungi1)
 last_output1 = Dense(1, name='last1')(bungi2)
 
 # 2.5 분기2

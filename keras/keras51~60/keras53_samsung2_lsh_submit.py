@@ -88,7 +88,7 @@ samsung_x_test= scaler.transform(samsung_x_test)
 hyundai_x_train = scaler.transform(hyundai_x_train)
 hyundai_x_test = scaler.transform(hyundai_x_test)
 
-timesteps = 20
+timesteps = 15
 
 samsung_x_train_split = split_x(samsung_x_train, timesteps)
 samsung_x_test_split = split_x(samsung_x_test, timesteps)
