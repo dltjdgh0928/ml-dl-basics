@@ -119,4 +119,4 @@ hyundai_x_predict = hyundai_x_predict.reshape(1, timesteps, 14)
 
 predict_result = model.predict([samsung_x_predict, hyundai_x_predict])
 
-print("이틀뒤의 시가는 바로바로 : ", np.round(predict_result[0],2))
+print("이틀뒤의 시가는 바로바로 : ", np.round(predict_result[1],2))
