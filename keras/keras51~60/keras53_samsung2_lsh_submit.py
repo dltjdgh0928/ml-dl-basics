@@ -121,19 +121,11 @@ es = EarlyStopping(monitor='val_loss', mode='min', patience=30, restore_best_wei
 loss = model.evaluate([samsung_x_test_split, hyundai_x_test_split], [samsung_y_test_split, hyundai_y_test_split])
 print('loss : ', loss)
 
-result = model.predict([samsung_x_test_split, hyundai_x_test_split])
+samsung_x_predict = samsung_x_test[-timesteps:]
+samsung_x_predict = samsung_x_predict.reshape(1, timesteps, 14)
+hyundai_x_predict = hyundai_x_test[-timesteps:]
+hyundai_x_predict = hyundai_x_predict.reshape(1, timesteps, 14)
 
-r2_1 = r2_score(samsung_y_test_split, result[0])
-r2_2 = r2_score(hyundai_y_test_split, result[0])
+predict_result = model.predict([samsung_x_predict, hyundai_x_predict])
 
-print('r2_1 : ', r2_1)
-print('r2_2 : ', r2_2)
-
-result = np.array(result)
-print(result.shape)
-result = result.reshape(2, 35)
-result = result.T
-print(result.shape)
-
-last_result = np.round(result[34, 0], 2)
-print("내일의 종가는 바로바로 : ", last_result)
+print("내일의 종가는 바로바로 : ", np.round(predict_result[0], 2))

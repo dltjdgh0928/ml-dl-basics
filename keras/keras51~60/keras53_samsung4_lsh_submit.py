@@ -57,9 +57,9 @@ print(datasets_samsung.describe(), datasets_hyundai.describe())
 print(type(datasets_samsung), type(datasets_hyundai))
 
 samsung_x = np.array(datasets_samsung.drop(['전일비', '시가'], axis=1))
-samsung_y = np.array(datasets_samsung['종가'])
+samsung_y = np.array(datasets_samsung['시가'])
 hyundai_x = np.array(datasets_hyundai.drop(['전일비', '시가'], axis=1))
-hyundai_y = np.array(datasets_hyundai['종가'])
+hyundai_y = np.array(datasets_hyundai['시가'])
 
 samsung_x = samsung_x[:180, :]
 samsung_y = samsung_y[:180]
@@ -117,19 +117,13 @@ model.compile(loss='mse', optimizer='adam')
 loss = model.evaluate([samsung_x_test_split, hyundai_x_test_split], [samsung_y_test_split, hyundai_y_test_split])
 print('loss : ', loss)
 
-result = model.predict([samsung_x_test_split, hyundai_x_test_split])
+samsung_x_predict = samsung_x_test[-timesteps:]
+samsung_x_predict = samsung_x_predict.reshape(1, timesteps, 14)
+hyundai_x_predict = hyundai_x_test[-timesteps:]
+hyundai_x_predict = hyundai_x_predict.reshape(1, timesteps, 14)
 
-r2_1 = r2_score(samsung_y_test_split, result[0])
-r2_2 = r2_score(hyundai_y_test_split, result[0])
 
-print('r2_1 : ', r2_1)
-print('r2_2 : ', r2_2)
+predict_result = model.predict([samsung_x_predict, hyundai_x_predict])
 
-result = np.array(result)
-print(result.shape)
-result = result.reshape(2, 34)
-result = result.T
-print(result.shape)
 
-last_result = np.round(result[33, 0], 2)
-print("이틀뒤의 시가는 바로바로 : ", last_result)
+print("이틀뒤의 시가는 바로바로 : ", np.round(predict_result[0],2))

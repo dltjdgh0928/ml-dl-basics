@@ -94,7 +94,6 @@ hyundai_x_train = scaler.transform(hyundai_x_train)
 hyundai_x_test = scaler.transform(hyundai_x_test)
 
 timesteps = 20
-
 samsung_x_train_split = split_x(samsung_x_train, timesteps)
 samsung_x_test_split = split_x(samsung_x_test, timesteps)
 hyundai_x_train_split = split_x(hyundai_x_train, timesteps)
@@ -117,7 +116,7 @@ dense3 = Dense(300, activation='relu', name='samsung3')(dense2)
 output1 = Dense(110, activation='relu', name='samsung4')(dense3)
 
 # 2.2 모델2
-input2 = Input(shape=(timestpes, 14))
+input2 = Input(shape=(timesteps, 14))
 dense11 = LSTM(100, name='huyndai1')(input2)
 dense12 = Dense(100, name='huyndai2')(dense11)
 dense13 = Dense(100, name='huyndai3')(dense12)
@@ -130,12 +129,12 @@ merge2 = Dense(200, activation='relu', name='mg2')(merge1)
 merge3 = Dense(300, activation='relu', name='mg3')(merge2)
 hidden_output = Dense(100, name='last')(merge3)
 
-# 2.5 분기1
+# 2.4 분기1
 bungi1 = Dense(10, activation='selu', name='bg1')(hidden_output)
 bungi2 = Dense(10, name='bg2')(bungi1)
 last_output1 = Dense(1, name='last1')(bungi2)
 
-# 2.6 분기2
+# 2.5 분기2
 last_output2 = Dense(1, activation='linear', name='last2')(hidden_output)
 model = Model(inputs=[input1, input2], outputs=[last_output1, last_output2])
 
