@@ -66,11 +66,6 @@ samsung_y = samsung_y[:180]
 hyundai_x = hyundai_x[:180, :]
 hyundai_y = hyundai_y[:180]
 
-# samsung_x = samsung_x[:1200, :]
-# samsung_y = samsung_y[:1200]
-# hyundai_x = hyundai_x[:1200, :]
-# hyundai_y = hyundai_y[:1200]
-
 samsung_x = np.flip(samsung_x, axis=1)
 samsung_y = np.flip(samsung_y)
 hyundai_x = np.flip(hyundai_x, axis=1)
@@ -84,8 +79,8 @@ samsung_y = np.char.replace(samsung_y.astype(str), ',', '').astype(np.float64)
 hyundai_x = np.char.replace(hyundai_x.astype(str), ',', '').astype(np.float64)
 hyundai_y = np.char.replace(hyundai_y.astype(str), ',', '').astype(np.float64)
 
-samsung_x_train, samsung_x_test, samsung_y_train, samsung_y_test, hyundai_x_train, hyundai_x_test, hyundai_y_train, hyundai_y_test = train_test_split(samsung_x, samsung_y, hyundai_x, hyundai_y,
-                                                                                                                                                      train_size=0.7, shuffle=False)
+_, samsung_x_test, _, samsung_y_test, _, hyundai_x_test, _, hyundai_y_test = train_test_split(samsung_x, samsung_y, hyundai_x, hyundai_y, train_size=0.7, shuffle=False)
+(samsung_x_train,samsung_y_train,hyundai_x_train,hyundai_y_train)=(samsung_x, samsung_y, hyundai_x, hyundai_y)
 
 scaler = MinMaxScaler()
 samsung_x_train = scaler.fit_transform(samsung_x_train)
@@ -105,8 +100,8 @@ samsung_y_test_split = samsung_y_test[(timesteps+1):]
 hyundai_y_train_split = hyundai_y_train[(timesteps+1):]
 hyundai_y_test_split = hyundai_y_test[(timesteps+1):]
 
-print(samsung_x_train_split.shape)      # (820, 20, 14)
-print(hyundai_x_train_split.shape)      # (820, 20, 14)
+print(samsung_x_train_split.shape)
+print(hyundai_x_train_split.shape)
 
 # 2. 모델구성
 # 2.1 모델1
@@ -144,7 +139,8 @@ model.summary()
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', mode='min', patience=30, restore_best_weights=True)
-hist = model.fit([samsung_x_train_split, hyundai_x_train_split], [samsung_y_train_split, hyundai_y_train_split], epochs=100, batch_size=64, validation_split=0.2, callbacks=[es])
+hist = model.fit([samsung_x_train_split, hyundai_x_train_split], [samsung_y_train_split, hyundai_y_train_split], epochs=100, batch_size=8,
+                 validation_data=([samsung_x_test_split, hyundai_x_test_split], [samsung_y_test_split, hyundai_y_test_split]), callbacks=[es])
 
 model.save(path_save + 'keras53_samsung4_lsh.h5')
 
@@ -157,8 +153,6 @@ samsung_x_predict = samsung_x_predict.reshape(1, timesteps, 14)
 hyundai_x_predict = hyundai_x_test[-timesteps:]
 hyundai_x_predict = hyundai_x_predict.reshape(1, timesteps, 14)
 
-
 predict_result = model.predict([samsung_x_predict, hyundai_x_predict])
-
 
 print("이틀뒤의 시가는 바로바로 : ", np.round(predict_result[0],2))
