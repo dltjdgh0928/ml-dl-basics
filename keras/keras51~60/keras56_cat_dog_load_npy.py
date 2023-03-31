@@ -45,6 +45,7 @@ plt.show()
 loss = model.evaluate(cat_dog_x_test, cat_dog_y_test)
 print('loss : ', loss)
 
-y_predict = model.predict(cat_dog_x_test)
+y_predict = np.round(model.predict(cat_dog_x_test))
 from sklearn.metrics import accuracy_score
-acc = accuracy_score(cat_dog_y_test, np.round(y_predict))
+acc = accuracy_score(cat_dog_y_test, y_predict)
+print('acc : ', acc)
