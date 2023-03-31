@@ -10,7 +10,7 @@ save_path = 'd:/study_data/_save/cat_dog/'
 
 datagen = ImageDataGenerator(rescale=1./255)
 start = time.time()
-cat_dog = datagen.flow_from_directory('d:/study_data/_data/cat_dog/PetImages/', target_size=(400, 400), batch_size=100, class_mode='binary', color_mode='rgb', shuffle=True)
+cat_dog = datagen.flow_from_directory('d:/study_data/_data/cat_dog/PetImages/', target_size=(400, 400), batch_size=10000, class_mode='binary', color_mode='rgb', shuffle=True)
 end = time.time()
 print(end - start)
 cat_dog_x = cat_dog[0][0]
@@ -31,9 +31,6 @@ np.save(save_path + 'keras56_cat_dog_x_train.npy', arr=cat_dog_x_train)
 np.save(save_path + 'keras56_cat_dog_x_test.npy', arr=cat_dog_x_test)
 np.save(save_path + 'keras56_cat_dog_y_train.npy', arr=cat_dog_y_train)
 np.save(save_path + 'keras56_cat_dog_y_test.npy', arr=cat_dog_y_test)
-
-
-'''
 
 # 2. 모델구성
 model = Sequential()
@@ -65,7 +62,3 @@ plt.plot(val_acc, label='val_acc')
 plt.grid()
 plt.legend()
 plt.show()
-
-
-# np.save(save_path + '파일명', arr=)
-'''
