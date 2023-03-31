@@ -9,11 +9,17 @@ save_path = 'd:/study_data/_save/men_woman/'
 
 datagen = ImageDataGenerator(rescale=1./255)
 start = time.time()
-men_woman = datagen.flow_from_directory('d:/study_data/_data/men_woman/', target_size=(150, 150), batch_size=1000, class_mode='binary', color_mode='rgb', shuffle=True)
+men_woman = datagen.flow_from_directory('d:/study_data/_data/men_woman/', target_size=(150, 150), batch_size=50, class_mode='binary', color_mode='rgb', shuffle=True)
 
 men_woman_x = men_woman[0][0]
 men_woman_y = men_woman[0][1]
-
+print(men_woman[0][0].shape)
+print(men_woman[0][1].shape)
+print(men_woman[0][1][0].shape)
+print(men_woman[0][0][0].shape)
+print(men_woman[0][0][0][0].shape)
+print(men_woman[0][0][0][0][0].shape)
+print(men_woman[0][0][0][0][0][0].shape)
 end = time.time()
 print(end - start)
 
