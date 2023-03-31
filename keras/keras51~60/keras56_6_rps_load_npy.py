@@ -45,7 +45,7 @@ plt.show()
 loss = model.evaluate(rps_x_test, rps_y_test)
 print('loss : ', loss)
 
-y_predict = np.argmax(model.predict(rps_x_test), axis=1)
+y_predict = model.predict(rps_x_test)
 from sklearn.metrics import accuracy_score
-acc = accuracy_score(rps_y_test, y_predict)
+acc = accuracy_score(np.argmax(rps_y_test, axis=1), np.argmax(y_predict, axis=1))
 print('acc : ', acc)
