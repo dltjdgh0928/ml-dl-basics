@@ -10,16 +10,14 @@ save_path = 'd:/study_data/_save/cat_dog/'
 
 datagen = ImageDataGenerator(rescale=1./255)
 start = time.time()
-cat_dog = datagen.flow_from_directory('d:/study_data/_data/cat_dog/PetImages/', target_size=(400, 400), batch_size=10000, class_mode='binary', color_mode='rgb', shuffle=True)
-end = time.time()
-print(end - start)
+cat_dog = datagen.flow_from_directory('d:/study_data/_data/cat_dog/PetImages/', target_size=(250, 250), batch_size=1000, class_mode='binary', color_mode='rgb', shuffle=True)
+
 cat_dog_x = cat_dog[0][0]
 cat_dog_y = cat_dog[0][1]
 
-print(cat_dog_x)
-print(cat_dog_y)
+end = time.time()
+print(end - start)
 
-print(cat_dog_x.shape)
 cat_dog_x_train, cat_dog_x_test, cat_dog_y_train, cat_dog_y_test = train_test_split(cat_dog_x, cat_dog_y, train_size=0.7, shuffle=True, random_state=123)
 
 print(cat_dog_x_train.shape)
@@ -34,7 +32,7 @@ np.save(save_path + 'keras56_cat_dog_y_test.npy', arr=cat_dog_y_test)
 
 # 2. 모델구성
 model = Sequential()
-model.add(Conv2D(32, (2, 2), input_shape=(300, 300, 3), activation='relu'))
+model.add(Conv2D(32, (2, 2), input_shape=(250, 250, 3), activation='relu'))
 model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(Flatten())
 model.add(Dense(16, activation='relu'))

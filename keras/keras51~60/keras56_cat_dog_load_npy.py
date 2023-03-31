@@ -12,7 +12,7 @@ cat_dog_y_test = np.load(save_path + 'keras56_cat_dog_y_test.npy')
 
 # 2. 모델구성
 model = Sequential()
-model.add(Conv2D(32, (2, 2), input_shape=(300, 300, 3), activation='relu'))
+model.add(Conv2D(32, (2, 2), input_shape=(250, 250, 3), activation='relu'))
 model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(Flatten())
 model.add(Dense(16, activation='relu'))
@@ -40,3 +40,10 @@ plt.plot(val_acc, label='val_acc')
 plt.grid()
 plt.legend()
 plt.show()
+
+# 4. 평가, 예측
+loss = model.evaluate(cat_dog_x_test, cat_dog_y_test)
+print('loss : ', loss)
+
+y_predict = model.predict(cat_dog_x_test)
+from sklearn.metrics import accuracy_score
