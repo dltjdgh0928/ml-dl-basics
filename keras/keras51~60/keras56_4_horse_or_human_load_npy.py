@@ -2,13 +2,19 @@
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, Dense, Flatten
+from sklearn.model_selection import train_test_split
 # 1. 데이터
 save_path = 'd:/study_data/_save/horse-or-human/'
 
-horse_human_x_train = np.load(save_path + 'keras56_horse_human_x_train.npy')
-horse_human_x_test = np.load(save_path + 'keras56_horse_human_x_test.npy')
-horse_human_y_train = np.load(save_path + 'keras56_horse_human_y_train.npy')
-horse_human_y_test = np.load(save_path + 'keras56_horse_human_y_test.npy')
+# horse_human_x_train = np.load(save_path + 'keras56_horse_human_x_train.npy')
+# horse_human_x_test = np.load(save_path + 'keras56_horse_human_x_test.npy')
+# horse_human_y_train = np.load(save_path + 'keras56_horse_human_y_train.npy')
+# horse_human_y_test = np.load(save_path + 'keras56_horse_human_y_test.npy')
+
+horse_human_x = np.load(save_path + 'keras56_horse_human_x.npy')
+horse_human_y = np.load(save_path + 'keras56_horse_human_y.npy')
+
+horse_human_x_train, horse_human_x_test, horse_human_y_train, horse_human_y_test = train_test_split(horse_human_x, horse_human_y, train_size=0.7, shuffle=True, random_state=123)
 
 # 2. 모델구성
 model = Sequential()
