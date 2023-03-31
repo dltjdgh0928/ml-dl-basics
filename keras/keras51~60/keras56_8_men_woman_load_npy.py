@@ -12,7 +12,7 @@ men_woman_y_test = np.load(save_path + 'keras56_men_woman_y_test.npy')
 
 # 2. 모델구성
 model = Sequential()
-model.add(Conv2D(32, (2, 2), input_shape=(250, 250, 3), activation='relu'))
+model.add(Conv2D(32, (2, 2), input_shape=(150, 150, 3), activation='relu'))
 model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(Flatten())
 model.add(Dense(16, activation='relu'))
