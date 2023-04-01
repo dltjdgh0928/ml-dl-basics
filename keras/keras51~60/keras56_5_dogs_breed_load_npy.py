@@ -1,5 +1,6 @@
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, Flatten
+from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout
+from tensorflow.keras import regularizers
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -12,12 +13,22 @@ breed_y = np.load(path_save + 'breed_y.npy')
 breed_x_train, breed_x_test, breed_y_train, breed_y_test = train_test_split(breed_x, breed_y, train_size=0.7, shuffle=True, random_state=123)
 
 # 2. 모델
+# model = Sequential()
+# model.add(Conv2D(64, 2, input_shape=(150, 150, 4), activation='relu'))
+# model.add(Conv2D(64, 2, activation='selu'))
+# model.add(Flatten())
+# model.add(Dense(32, activation='relu'))
+# model.add(Dense(32, activation='relu'))
+# model.add(Dense(5, activation='softmax'))
+
 model = Sequential()
-model.add(Conv2D(64, 2, input_shape=(150, 150, 4), activation='relu'))
-model.add(Conv2D(64, 2, activation='selu'))
+model.add(Conv2D(64, 2, input_shape=(1000, 1000, 4), activation='relu', kernel_regularizer=regularizers.l2(0.001)))
+model.add(Conv2D(64, 2, activation='selu', kernel_regularizer=regularizers.l2(0.001)))
 model.add(Flatten())
-model.add(Dense(32, activation='relu'))
-model.add(Dense(32, activation='relu'))
+model.add(Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.001)))
+model.add(Dropout(0.2))
+model.add(Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.001)))
+model.add(Dropout(0.2))
 model.add(Dense(5, activation='softmax'))
 
 # 3. 컴파일, 훈련
