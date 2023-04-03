@@ -1,3 +1,4 @@
+
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 import pandas as pd
@@ -7,11 +8,11 @@ from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
 from tensorflow.keras.utils import to_categorical
 
-path_save = 'd:/study_data/_save/cat_dog/'
-x_train = np.load(path_save + 'keras58_8_cat_dog_x_train.npy')
-x_test = np.load(path_save + 'keras58_8_cat_dog_x_test.npy')
-y_train = np.load(path_save + 'keras58_8_cat_dog_y_train.npy')
-y_test = np.load(path_save + 'keras58_8_cat_dog_y_test.npy')
+path_save = 'd:/study_data/_save/men_woman/'
+x_train = np.load(path_save + 'keras58_99_men_woman_x_train.npy')
+x_test = np.load(path_save + 'keras58_99_men_woman_x_test.npy')
+y_train = np.load(path_save + 'keras58_99_men_woman_y_train.npy')
+y_test = np.load(path_save + 'keras58_99_men_woman_y_test.npy')
 
 # 2. 모델
 model = Sequential()
