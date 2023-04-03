@@ -22,6 +22,10 @@ train_datagen = ImageDataGenerator(
     fill_mode='nearest'
 )
 
+train_datagen2 = ImageDataGenerator(
+    rescale=1./1
+)
+
 augment_size = 40000
 
 np.random.seed(0)
@@ -39,9 +43,16 @@ x_augmented = train_datagen.flow(x_augmented, y_augmented, batch_size=augment_si
 
 x_train = np.concatenate([x_train/255., x_augmented], axis=0)
 y_train = np.concatenate([y_train, y_augmented], axis=0)
+x_test = x_test/255.
+
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
-x_test = x_test/255.
+
+#################################### x, y 합치기 ####################################
+
+batch_size=64
+xy_train = train_datagen2.flow(x_train, y_train, batch_size=batch_size, shuffle=True)
+
 
 # 2. 모델
 model = Sequential()
@@ -56,7 +67,7 @@ model.add(Dense(10, activation='softmax'))
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
 es = EarlyStopping(monitor='acc', mode='auto', patience=20, restore_best_weights=True)
-model.fit(x_train, y_train, epochs=1, batch_size=128, validation_split=0.2, callbacks=[es])
+model.fit_generator(xy_train, epochs=1, steps_per_epoch=len(xy_train)/batch_size)
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)

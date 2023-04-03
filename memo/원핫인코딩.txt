@@ -11,7 +11,7 @@ print(type(y))
 
 y = np.array(y)
 print(y)
-print(type(y))
+print(type(y)) 
 
 2. keras의 to_categorical
 
