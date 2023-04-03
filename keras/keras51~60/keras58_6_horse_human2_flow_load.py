@@ -7,15 +7,15 @@ from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
 from tensorflow.keras.utils import to_categorical
 
-path_save = 'd:/study_data/_save/brain/'
-x_train = np.load(path_save + 'keras58_5_brain_x_train.npy')
-x_test = np.load(path_save + 'keras58_5_brain_x_test.npy')
-y_train = np.load(path_save + 'keras58_5_brain_y_train.npy')
-y_test = np.load(path_save + 'keras58_5_brain_y_test.npy')
+path_save = 'd:/study_data/_save/horse-or-human/'
+x_train = np.load(path_save + 'keras58_6_horse_human_x_train.npy')
+x_test = np.load(path_save + 'keras58_6_horse_human_x_test.npy')
+y_train = np.load(path_save + 'keras58_6_horse_human_y_train.npy')
+y_test = np.load(path_save + 'keras58_6_horse_human_y_test.npy')
 
 # 2. 모델
 model = Sequential()
-model.add(Conv2D(64, 2, input_shape=(100, 100, 1)))
+model.add(Conv2D(64, 2, input_shape=(100, 100, 3)))
 model.add(Conv2D(64, 2))
 model.add(Flatten())
 model.add(Dense(64, activation='relu'))
@@ -26,7 +26,7 @@ model.add(Dense(1, activation='sigmoid'))
 # 3. 컴파일, 훈련
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics='acc')
 es = EarlyStopping(monitor='acc', mode='auto', patience=20, restore_best_weights=True)
-model.fit(x_train, y_train, epochs=1, batch_size=128, validation_split=0.2, callbacks=[es])
+model.fit(x_train, y_train, epochs=10, batch_size=128, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
