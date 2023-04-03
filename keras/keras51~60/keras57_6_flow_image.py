@@ -55,21 +55,21 @@ model.add(Dense(10, activation='softmax'))
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
 es = EarlyStopping(monitor='acc', mode='auto', patience=20, restore_best_weights=True)
-model.fit(x_train, y_train, epochs=100, batch_size=128, validation_split=0.2, callbacks=[es])
+model.fit(x_train, y_train, epochs=1, batch_size=128, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
 print('loss : ', loss)
 
 y_predict = np.argmax(model.predict(x_test), axis=1)
-print('acc : ', accuracy_score(y_predict, y_test))
+print('acc : ', accuracy_score(y_predict, np.argmax(y_test, axis=1)))
 
 import matplotlib.pyplot as plt
 plt.figure(figsize=(7, 7))
 for i in range(10):
     plt.subplot(2, 10, i+1)
     plt.axis('off')
-    plt.imshow(x_train[i], cmap='gray')
+    plt.imshow(x_train[i+60000], cmap='gray')
     plt.subplot(2, 10, i+11)
     plt.axis('off')
     plt.imshow(x_augmented[i], cmap='gray')
