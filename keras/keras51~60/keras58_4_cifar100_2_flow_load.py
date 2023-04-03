@@ -22,7 +22,7 @@ model.add(Flatten())
 model.add(Dense(64, activation='relu'))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(32, activation='relu'))
-model.add(Dense(10, activation='softmax'))
+model.add(Dense(100, activation='softmax'))
 
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')

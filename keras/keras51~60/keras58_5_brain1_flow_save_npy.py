@@ -1,4 +1,3 @@
-from tensorflow.keras.datasets import cifar100
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import numpy as np
 import pandas as pd
@@ -8,8 +7,6 @@ from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
 from tensorflow.keras.utils import to_categorical
 
-(x_train, y_train), (x_test, y_test) = cifar100.load_data()
-print(y_train)
 train_datagen = ImageDataGenerator(
     rescale=1./255,
     horizontal_flip=True,
@@ -22,7 +19,20 @@ train_datagen = ImageDataGenerator(
     fill_mode='nearest'
 )
 
-augment_size = 10000
+test_datagen = ImageDataGenerator(rescale=1./255)
+
+xy_train = train_datagen.flow_from_directory('d:/study_data/_data/brain/train/', target_size=(100, 100), batch_size=30, class_mode='binary', 
+                                  color_mode='grayscale', shuffle=True)
+
+xy_test = test_datagen.flow_from_directory('d:/study_data/_data/brain/test/', target_size=(100, 100), batch_size=30, class_mode='binary', 
+                                  color_mode='grayscale', shuffle=True)
+
+x_train = xy_train[0][0]
+y_train = xy_train[0][1]
+x_test = xy_test[0][0]
+y_test = xy_test[0][1]
+
+augment_size = 10
 
 np.random.seed(0)
 randidx = np.random.randint(x_train.shape[0], size=augment_size)
@@ -38,12 +48,12 @@ x_augmented = train_datagen.flow(x_augmented, y_augmented, batch_size=augment_si
 
 x_train = np.concatenate([x_train/255., x_augmented], axis=0)
 y_train = np.concatenate([y_train, y_augmented], axis=0)
-y_train = to_categorical(y_train)
-y_test = to_categorical(y_test)
+# y_train = to_categorical(y_train)
+# y_test = to_categorical(y_test)
 x_test = x_test/255.
 
-path_save = 'd:/study_data/_save/cifar100/'
-np.save(path_save + 'keras58_4_cifar100_x_train.npy', arr=x_train)
-np.save(path_save + 'keras58_4_cifar100_x_test.npy', arr=x_test)
-np.save(path_save + 'keras58_4_cifar100_y_train.npy', arr=y_train)
-np.save(path_save + 'keras58_4_cifar100_y_test.npy', arr=y_test)
+path_save = 'd:/study_data/_save/brain/'
+np.save(path_save + 'keras58_5_brain_x_train.npy', arr=x_train)
+np.save(path_save + 'keras58_5_brain_x_test.npy', arr=x_test)
+np.save(path_save + 'keras58_5_brain_y_train.npy', arr=y_train)
+np.save(path_save + 'keras58_5_brain_y_test.npy', arr=y_test)
