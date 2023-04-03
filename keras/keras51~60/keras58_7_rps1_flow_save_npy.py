@@ -22,35 +22,35 @@ train_datagen = ImageDataGenerator(
 
 test_datagen = ImageDataGenerator(rescale=1./255)
 
-horse_human = train_datagen.flow_from_directory('d:/study_data/_data/rps/', target_size=(100, 100), batch_size=100, class_mode='categorical', color_mode='rgb', shuffle=True)
+rps = train_datagen.flow_from_directory('d:/study_data/_data/rps/', target_size=(100, 100), batch_size=100, class_mode='categorical', color_mode='rgb', shuffle=True)
 
-horse_human_x = horse_human[0][0]
-horse_human_y = horse_human[0][1]
+rps_x = rps[0][0]
+rps_y = rps[0][1]
 
-horse_human_x_train, horse_human_x_test, horse_human_y_train, horse_human_y_test = train_test_split(horse_human_x, horse_human_y, train_size=0.7, shuffle=True, random_state=123)
+rps_x_train, rps_x_test, rps_y_train, rps_y_test = train_test_split(rps_x, rps_y, train_size=0.7, shuffle=True, random_state=123)
 
 augment_size = 100
 
 np.random.seed(0)
-randidx = np.random.randint(horse_human_x_train.shape[0], size=augment_size)
+randidx = np.random.randint(rps_x_train.shape[0], size=augment_size)
 
-x_augmented = horse_human_x_train[randidx].copy()
-y_augmented = horse_human_y_train[randidx].copy()
+x_augmented = rps_x_train[randidx].copy()
+y_augmented = rps_y_train[randidx].copy()
 
-# horse_human_x_train = horse_human_x_train.reshape(-1, 32, 32, 3)
-# horse_human_x_test = horse_human_x_test.reshape(horse_human_x_test.shape[0], horse_human_x_test.shape[1], horse_human_x_test.shape[2], 1)
+# rps_x_train = rps_x_train.reshape(-1, 32, 32, 3)
+# rps_x_test = rps_x_test.reshape(rps_x_test.shape[0], rps_x_test.shape[1], rps_x_test.shape[2], 1)
 # x_augmented = x_augmented.reshape(x_augmented.shape[0], x_augmented.shape[1], x_augmented.shape[2], 1)
 
 x_augmented = train_datagen.flow(x_augmented, y_augmented, batch_size=augment_size, shuffle=False).next()[0]
 
-horse_human_x_train = np.concatenate([horse_human_x_train/255., x_augmented], axis=0)
-horse_human_y_train = np.concatenate([horse_human_y_train, y_augmented], axis=0)
-# horse_human_y_train = to_categorical(horse_human_y_train)
-# horse_human_y_test = to_categorical(horse_human_y_test)
-horse_human_x_test = horse_human_x_test/255.
+rps_x_train = np.concatenate([rps_x_train/255., x_augmented], axis=0)
+rps_y_train = np.concatenate([rps_y_train, y_augmented], axis=0)
+# rps_y_train = to_categorical(rps_y_train)
+# rps_y_test = to_categorical(rps_y_test)
+rps_x_test = rps_x_test/255.
 
 path_save = 'd:/study_data/_save/rps/'
-np.save(path_save + 'keras58_7_rps_x_train.npy', arr=horse_human_x_train)
-np.save(path_save + 'keras58_7_rps_x_test.npy', arr=horse_human_x_test)
-np.save(path_save + 'keras58_7_rps_y_train.npy', arr=horse_human_y_train)
-np.save(path_save + 'keras58_7_rps_y_test.npy', arr=horse_human_y_test)
+np.save(path_save + 'keras58_7_rps_x_train.npy', arr=rps_x_train)
+np.save(path_save + 'keras58_7_rps_x_test.npy', arr=rps_x_test)
+np.save(path_save + 'keras58_7_rps_y_train.npy', arr=rps_y_train)
+np.save(path_save + 'keras58_7_rps_y_test.npy', arr=rps_y_test)
