@@ -36,29 +36,55 @@ x_data = train_datagen.flow(np.tile(x_train[0].reshape(28*28), augment_size).res
                             np.zeros(augment_size),         # y데이터 : 그림만 그리므로 불필요, 0대입                            
                             batch_size=augment_size,
                             shuffle=True
-)
+).next()
 
-print(x_data)
-print(x_data[0])        # x와 y가 모두 포함
-print(x_data[0][0].shape)                          # (100, 28, 28, 1)
-print(x_data[0][1].shape)                          # (100,)
-print(x_data[0][0][0].shape)                       # (28, 28, 1)
-print(x_data[0][0][0][0].shape)                    # (28, 1)
-print(x_data[0][0][0][0][0].shape)                 # (1,)
-print(x_data[0][0][0][0][0][0].shape)              # ()
+
+################################## .next 사용 #############################
+print(x_data)       # x와 y가 합쳐진 데이터 출력
+print(type(x_data))                         # <class 'tuple'>
+print(x_data[0].shape)                      # (100, 28, 28, 1)
+print(x_data[1].shape)                      # (100,)
+print(x_data[0][0].shape)                   # (28, 28, 1)
+print(x_data[0][99].shape)                  # (28, 28, 1)
+print(x_data[0][0][0].shape)                # (28, 1)
+print(x_data[0][0][0][0].shape)             # (1,)
+print(x_data[0][0][0][0][0].shape)          # ()
+print(type(x_data[0]))
 
 import matplotlib.pyplot as plt
 plt.figure(figsize=(7, 7))
 for i in range(49):
     plt.subplot(7, 7, i+1)
     plt.axis('off')
-    plt.imshow(x_data[0][0][i], cmap='gray')
+    plt.imshow(x_data[0][i], cmap='gray')
 plt.show()
 
-# y_data = train_datagen.flow()``
+
+
+################################## .next 미사용 #############################
+# print(x_data)
+# print(x_data[0])        # x와 y가 모두 포함
+# print(x_data[0][0].shape)                          # (100, 28, 28, 1)
+# print(x_data[0][1].shape)                          # (100,)
+# print(x_data[0][0][0].shape)                       # (28, 28, 1)
+# print(x_data[0][0][0][0].shape)                    # (28, 1)
+# print(x_data[0][0][0][0][0].shape)                 # (1,)
+# print(x_data[0][0][0][0][0][0].shape)              # ()
+
+# import matplotlib.pyplot as plt
+# plt.figure(figsize=(7, 7))
+# for i in range(49):
+#     plt.subplot(7, 7, i+1)
+#     plt.axis('off')
+#     plt.imshow(x_data[0][0][i], cmap='gray')
+# plt.show()
 
 
 
 
 
 
+
+
+
+ 
