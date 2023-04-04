@@ -35,6 +35,7 @@ print(x)        # [[3, 4, 2, 2, 5, 6, 7, 1, 1, 1, 8]]
 
 
 ######### 3. 사이킷런 onehot ##########
+# 2차원으로 받아들여야 한다.
 from sklearn.preprocessing import OneHotEncoder
 import numpy as np
 ohe = OneHotEncoder()
