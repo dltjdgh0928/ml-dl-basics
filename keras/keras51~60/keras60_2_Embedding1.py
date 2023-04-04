@@ -46,9 +46,9 @@ print("단어사전의 갯수 : ", word_index)
 
 # 2. 모델
 model = Sequential()
-model.add(Embedding(28, 32))
+model.add(Embedding(28, 32,'uniform',None,None,None,False,5))
 # model.add(Embedding(28, 32, 5))           # error 
-model.add(Embedding(input_dim=28, output_dim=33, input_length=5))
+# model.add(Embedding(input_dim=28, output_dim=33, input_length=5))
 model.add(LSTM(32))
 # model.add(Reshape(target_shape=(5, 1), input_shape=(5,)))
 # model.add(Dense(32, input_shape=(5,)))
