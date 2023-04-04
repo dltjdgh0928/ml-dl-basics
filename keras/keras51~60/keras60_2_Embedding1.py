@@ -1,6 +1,6 @@
 from keras.preprocessing.text import Tokenizer
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, LSTM, Reshape, Embedding
 import numpy as np
 
 # 1. 데이터
@@ -40,9 +40,32 @@ pad_x = pad_sequences(x, padding='pre', maxlen=5)
 # pre, post
 print(pad_x)
 print(pad_x.shape)      # (14, 5)
-
+pad_x = pad_x.reshape(pad_x.shape[0], pad_x.shape[1], 1)
 word_index = len(token.word_index)
 print("단어사전의 갯수 : ", word_index)
 
 # 2. 모델
 model = Sequential()
+model.add(Embedding(28, 32))
+# model.add(Embedding(28, 32, 5))           # error 
+model.add(Embedding(input_dim=28, output_dim=33, input_length=5))
+model.add(LSTM(32))
+# model.add(Reshape(target_shape=(5, 1), input_shape=(5,)))
+# model.add(Dense(32, input_shape=(5,)))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+model.summary()
+
+# 3. 컴파일, 훈련
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics='acc')
+model.fit(pad_x, labels, epochs=100, batch_size=16)
+
+# 4. 평가, 예측
+acc = model.evaluate(pad_x, labels)[1]
+print('acc : ', acc)
+print(pad_x[0])
+x_pred= pad_x[0].reshape(1, 5, 1)
+y_pred_1 = np.round(model.predict(x_pred))
+print(y_pred_1)
