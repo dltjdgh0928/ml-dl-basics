@@ -1,22 +1,23 @@
-from keras.preprocessing.text import Tokenizer
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM, Reshape, Embedding
+from tensorflow.keras.datasets import reuters
 import numpy as np
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+import pandas as pd
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Embedding, LSTM
+from tensorflow.keras.preprocessing.text import Tokenizer
 
 # 1. 데이터
-docs = ['너무 재밋어요', '참 최고에요', '참 잘 만든 영화예요',
-        '추천하고 싶은 영화입니다.', '한 번 더 보고 싶네요', '글세요', 
-        '별로에요', '생각보다 지루해요', '연기가 어색해요', 
-        '재미없어요', '너무 재미없다', ' 참 재밋네요', '환희가 잘 생기긴 했어요',
-        '환희가 안해요']
+(x_train, y_train), (x_test, y_test) = reuters.load_data(num_words=10000, test_split=0.2)
 
-# 긍정인지 부정인지 맞춰봐!!!
+print(x_train)
+print(y_train)    # [ 3 4 3 ... 25 3 25 ]
+print(x_train.shape, y_train.shape)          # (8982,) (8982,)
+print(x_test.shape, y_test.shape)            # (2246,) (2246,)
 
-x_predict = ['나는 성호가 정말 재미없다 너무 정말']
+print(len(x_train[0]), len(x_train[1]))      # 87 56
+print(np.unique(y_train))                    # [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 ]
 
-labels = np.array([1,1,1,1,1,0,0,0,0,0,0,1,1,0])
-# 긍정 1, 부정 0
+# softmax 46, embedding input_dim=10000, output_dim=마음대로, input_length=max(len)
+
 
 data = docs + x_predict
 print(data)
@@ -66,9 +67,3 @@ print('acc : ', acc)
 
 y_pred = np.round(model.predict(pad_x_pred))
 print(y_pred)
-
-
-# print(pad_x[0])
-# x_pred= pad_x[0].reshape(1, 5, 1)
-# y_pred_1 = np.round(model.predict(x_pred))
-# print(y_pred_1)
