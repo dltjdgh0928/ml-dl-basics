@@ -22,12 +22,21 @@ print(x)        # [[3, 4, 2, 2, 5, 6, 7, 1, 1, 1, 8]]
 
 
 ######### 2. get_dummies ##########
-import pandas as pd
-import numpy as np
+# import pandas as pd
+# import numpy as np
 
-# x = pd.get_dummies(np.array(x).reshape(11,))
-x = pd.get_dummies(np.array(x).ravel())
-print(x)
+# # x = pd.get_dummies(np.array(x).reshape(11,))
+# x = pd.get_dummies(np.array(x).ravel())
+# print(x)
 
 # x = pd.get_dummies(x[0])
 # print(x)
+
+
+
+######### 3. 사이킷런 onehot ##########
+from sklearn.preprocessing import OneHotEncoder
+import numpy as np
+ohe = OneHotEncoder()
+x = ohe.fit_transform(np.array(x).reshape(-1, 1)).toarray()
+print(x)
