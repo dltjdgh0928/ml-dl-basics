@@ -20,10 +20,6 @@ print("뉴스기사의 평균길이 : ", sum(map(len, x_train)) / len(x_train)) 
 
 print(np.unique(y_train))                    # [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45]
 print(np.unique(y_test))                     # [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45]
-print(type(x_train), type(x_test))
-
-print(len(y_train))
-print(len(y_test))
 
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
@@ -32,8 +28,6 @@ y_test = to_categorical(y_test)
 
 pad_x_train = pad_sequences(x_train, padding='pre', maxlen=100, truncating='pre')
 pad_x_test = pad_sequences(x_test, padding='pre', maxlen=100, truncating='pre')
-print(x_train.shape)
-print(x_test.shape)
 
 # softmax 46, embedding input_dim=10000, output_dim=마음대로, input_length=max(len)
 pad_x_train = pad_x_train.reshape(pad_x_train.shape[0], pad_x_train.shape[1], 1)

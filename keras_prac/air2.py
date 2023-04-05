@@ -28,7 +28,7 @@ test_data['type']=type_to_HP(test_data['type'])
 
 
 # Train isolation forest model on train data
-model = IsolationForest(n_estimators=3000,random_state=3245,max_samples=2463,contamination=0.1,
+model = IsolationForest(n_estimators=3000,random_state=3245,max_samples=2463,contamination=0.03,
                         max_features=7, bootstrap=False,)
 
 model.fit(train_data)
@@ -39,7 +39,7 @@ predictions = model.predict(test_data)
 # Save predictions to submission file
 new_predictions = [0 if x == 1 else 1 for x in predictions]
 submission['label'] = pd.DataFrame({'Prediction': new_predictions})
-submission.to_csv(save_path+'submission.csv', index=False)
+submission.to_csv(save_path+'submission1.csv', index=False)
 
 
 
