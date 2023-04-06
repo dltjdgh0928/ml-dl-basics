@@ -1,0 +1,88 @@
+DNA 염기서열을 이용한 종 예측
+
+전공이 화공
+            
+인간은 총 23쌍(=46개)의 염색체를 가지고
+염기서열의 갯수는 매우 많음
+1번 염색체: 249,250,621 bp
+2번 염색체: 243,199,373 bp
+3번 염색체: 198,022,430 bp
+4번 염색체: 191,154,276 bp
+5번 염색체: 180,915,260 bp
+6번 염색체: 171,115,067 bp
+7번 염색체: 159,138,663 bp
+8번 염색체: 146,364,022 bp
+9번 염색체: 141,213,431 bp
+10번 염색체: 135,534,747 bp
+11번 염색체: 135,006,516 bp
+12번 염색체: 133,851,895 bp
+13번 염색체: 115,169,878 bp
+14번 염색체: 107,349,540 bp
+15번 염색체: 102,531,392 bp
+16번 염색체: 90,354,753 bp
+17번 염색체: 81,195,210 bp
+18번 염색체: 78,077,248 bp
+19번 염색체: 59,128,983 bp
+20번 염색체: 63,025,520 bp
+21번 염색체: 46,944,323 bp
+22번 염색체: 50,818,468 bp
+X 염색체: 155,270,560 bp
+Y 염색체: 59,373,566 bp
+MT 염색체: 16,569 bp
+
+따라서 염색체 전체 데이터를 넣었을때 종을 예측하는것은 데이터 규모가 너무 커짐 
+인간이라는 '하나'의 y값을 뽑기 위해 입력해야하는 x값이 몇십억단위
+
+그러나 DNA바코드 기술(특정 구간이 특이적으로 존재하는 종)을 이용하면
+COI유전자나 ITS유전자 등 특정구간만의 염기서열만을 사용하는 방법으로 종 구분가능(둘 다 1번 염색체에 존재)
+대략 COI유전자는 650개 정도(종과 개체마다 길이가 제 각각이지만 특징이 있음)
+
+인간 COI 유전자 염기서열: ATGACCCG...TGAGGAGC
+침팬지 COI 유전자 염기서열: ATGACCCG...CGAGGAGC
+예를 들어, 인간 COI 유전자에서는 마지막 세 개의 염기가 TGAGGAGC로 나타나지만, 
+침팬지 COI 유전자에서는 CGAGGAGC로 나타난다
+
+즉, 정확히는 COI유전자 염기서열을 입력하면 종을 예측
+
+데이터 : NCBI(National Center for Biotechnology Information) - 미국 국립생물공학정보센터
+에 학명 + COI를 붙이면 데이터가 나옴
+
+ex) Homo sapienss COI
+검색결과 2777명의 데이터가 있음
+이런식으로 나옴
+        1 tagcctcctt attcgagccg agctgggcca gccaggcaac cttctaggta acgaccacat
+       61 ctacaacgtt atcgtcacag cccatgcatt tgtaataatc ttcttcatag taatacccat
+      121 cataatcgga ggctttggca actgactagt tcccctaata atcggtgccc ccgatatggc
+      181 gtttccccgc ataaacaaca taagcttctg actcttacct ccctctctcc tactcctgct
+      241 cgcatctgct atagtggagg ccggagcagg aacaggttga acagtctacc ctcccttagc
+      301 agggaactac tcccaccctg gagcctccgt agacctaacc atcttctcct tacacctagc
+      361 aggtgtctcc tctatcttag gggccatcaa tttcatcaca acaattatca atataaaacc
+      421 ccctgccata acccaatacc aaacgcccct cttcgtctga tccgtcctaa tcacagcagt
+      481 cctacttctc ctatctctcc cagtcctagc tgctggcatc actatactac taacagaccg
+      541 caacctcaac accaccttct tcgaccccgc cggaggagga gaccccattc tataccaaca
+      601 cctattcttg attctta
+
+고래가 검색하고 싶다 하면 Cetacea COI 치면되고
+1280개 나옴
+
+복붙해서 y라벨값만 [0, 1, ... ,n ] 으로 설정해주면 되지만
+너무 많은 종을 분류하려면 크롤링해야하는 데이터 갯수가 많아지니까 COI유전자가 존재하는 10종 이내로 제한
+
+염기서열의 길이가 다른 문제 
+1. pad_sequence로 처리
+2. RNN으로 처리
+
+이 두 개의 전처리 기법의 성능을 비교
+
+또한 실제로 RNA에서 염기서열을 읽을때 AUG 라는 개시코돈부터 시작해서
+UAG, UAA, UGA라는 종결코돈으로 이루어진 엑손 부분만 유의미한 정보를 담고있고
+나머지는 인트로이라는 무의한 정보의 형태로 버려지는데 이걸 이용해서 전체를 통으로 넣었을때와 성능 비교
+
+성능 비교법 총 4가지
+
+
+
+
+
+
+

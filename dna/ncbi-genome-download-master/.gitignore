@@ -1,0 +1,18 @@
+*.swp
+*.pyc
+ncbi_genome_download.egg-info/*
+.coverage
+htmlcov/*
+.cache/*
+dist/*
+
+**/.ropeproject/*
+
+# Pycharm
+.idea/*
+
+# neovim
+.vim/*
+
+# vscode
+.vscode/*

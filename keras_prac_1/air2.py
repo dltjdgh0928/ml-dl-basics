@@ -28,7 +28,7 @@ test_data['type']=type_to_HP(test_data['type'])
 
 
 # Train isolation forest model on train data
-model = IsolationForest(n_estimators=3000,random_state=3245,max_samples=2463,contamination=0.03,
+model = IsolationForest(n_estimators=3000,random_state=3245,max_samples=2463,contamination=0.02,
                         max_features=7, bootstrap=False,)
 
 model.fit(train_data)
