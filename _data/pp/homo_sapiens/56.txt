@@ -1,0 +1,10 @@
+        1 ggtggtgttg aggttgcggt ctgttagtag tatagtgatg ccagcagcta ggactgggag
+       61 agataggaga agtaggactg ctgtgattag gacggatcag acgaagaggg gygtttggta
+      121 ttgggttatg gcagggggtt ttatattgat aattgttgtg atgaaattga tggcccctaa
+      181 gatagaggag acacctgcta ggtgtaagga gaagatggtt aggtctacgg aggctccagg
+      241 gtgggagtan ttccctgcta agggagggtn gactgttcaa cctgttcctg ctccggcctc
+      301 cactatagca gatgcgagca ggagtaggag agagggaggt aagagtcaga agcttatgtt
+      361 gtttatgcgg ggaaacgcca tatcgggggc accgattatt aggggaacta gtcagttgcc
+      421 aaagcctccg attatgatgg gtattactat gaagaagatt attacaaatg catgggctgt
+      481 gacgataacg ttgtanatgt ggtcgttacc tagaaggttg cctggctggc ccagctcggc
+      541 tcgaataagg aggctta
