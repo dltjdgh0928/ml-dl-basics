@@ -9,42 +9,47 @@ from tensorflow.keras.layers import Dense, LSTM, Flatten
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
 
-start_codon = [2, 1, 3]
-stop_codons = [[1, 2, 3], [1, 3, 2], [1, 2, 2]]
+exon_pattern = re.compile(r"tac(?:.{3})*?(?:atc|act|att)")
 
 # 1. 데이터
 def bring(path):
-    data_list = []
+    exon_list = []
     for filename in os.listdir(path):
         if filename.endswith('.txt'):
             with open(os.path.join(path, filename), 'r') as f:
                 data = f.read().replace('\n', '').replace(' ', '')
             data = re.sub(r"[0-9]", "", data)
-            data = data.replace('a', '1').replace('t', '2').replace('c', '3').replace('g', '4').replace('y', '5').replace('w', '6').replace('r', '7').replace('k', '8').replace('v', '9').replace('n', '10').replace('s', '11').replace('m', '12')
-            data = np.array([int(i) for i in data])
-            
-            exon_list = []
-            while start_codon in data:
-                start_idx = data.index(start_codon)
-                print(start_idx)
-                for stop_codons in stop_codons:
-                    stop_idx = data[start_idx:].find(stop_codons)
-                    if stop_idx != -1 and (stop_idx - start_idx) % 3 == 0:
-                        exon = data[start_idx:start_idx+stop_idx+3]
-                        if exon.count(start_codon) == 1 and exon.count(stop_codons) == 1:
-                            exon_list.append(exon)
-                data = data[start_idx+stop_idx+3:]
-                break
-            print(exon_list)
-            
-            data = pad_sequences(exon_list, maxlen=maxlen, padding='pre', truncating='pre')
-            data = data.reshape(-1, 1)
-            data_list.append(data)
-    all_data = np.array(np.concatenate(data_list, axis=1))
+
+            exons = []
+            last_stop = 0
+            for match in exon_pattern.finditer(data):
+                start = match.start()
+                end = match.end()
+                if start % 3 == 0 and start >= last_stop:
+                    exons.append(match.group())
+                    last_stop = end
+
+            if exons:
+                print("Exons found:")
+                for exon in exons:
+                    print(exon)
+                print("Number of exons:", len(exons))
+                
+                exons = "".join(exons)
+                exons = exons.replace('a', '1').replace('t', '2').replace('c', '3').replace('g', '4').replace('y', '5').replace('w', '6').replace('r', '7').replace('k', '8').replace('v', '9').replace('n', '10').replace('s', '11').replace('m', '12')
+                exons = [list(str(i)) for i in exons]
+                exons = np.array(exons).reshape(-1,)
+                exons = pad_sequences([exons], maxlen=maxlen, padding='pre', truncating='pre')
+                exons = exons.reshape(-1, 1)
+                exon_list.append(exons)
+            else:
+                print("No exons found")
+                
+    all_data = np.array(np.concatenate(exon_list, axis=1))
     all_data = all_data.T
     return all_data
 
-maxlen = 1000
+maxlen = 200
 
 homo_path = './_data/pp/homo_sapiens/'
 x_homo = bring(homo_path)

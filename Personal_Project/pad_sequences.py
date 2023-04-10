@@ -41,8 +41,20 @@ haemagogus_path = './_data/pp/Haemagogus/'
 x_haemagogus = bring(haemagogus_path)
 y_haemagogus = np.array([2]*x_haemagogus.shape[0])
 
-x = np.concatenate([x_homo, x_culex, x_haemagogus], axis=0)
-y = np.concatenate([y_homo, y_culex, y_haemagogus], axis=0)
+ovis_path = './_data/pp/Ovis_aries/'
+x_ovis = bring(ovis_path)
+y_ovis = np.array([3]*x_ovis.shape[0])
+
+mus_path = './_data/pp/Mus_musculus/'
+x_mus = bring(mus_path)
+y_mus = np.array([4]*x_mus.shape[0])
+
+sciuridae_path = './_data/pp/Sciuridae/'
+x_sciuridae = bring(sciuridae_path)
+y_sciuridae = np.array([4]*x_sciuridae.shape[0])
+
+x = np.concatenate([x_homo, x_culex, x_haemagogus, x_ovis, x_mus, x_sciuridae], axis=0)
+y = np.concatenate([y_homo, y_culex, y_haemagogus, y_ovis, y_mus, y_sciuridae], axis=0)
 
 y = to_categorical(y)
 
@@ -61,13 +73,15 @@ model.add(Dense(len(y[0]), activation='softmax'))
 
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
-es = EarlyStopping(monitor='acc', patience=20, mode='auto', restore_best_weights=True)
+es = EarlyStopping(monitor='val_acc', patience=40, mode='auto', restore_best_weights=True)
 model.fit(x_train, y_train, epochs=100, batch_size=3, validation_split=0.2, callbacks=[es])
 
 
 # 4. 평가, 예측
 acc = model.evaluate(x_test, y_test)[1]
-print('[ 개체수 ] \nhomo sapiens :', x_homo.shape[0], '\nCulex : ', x_culex.shape[0], '\nHaemagogus : ', x_haemagogus.shape[0])
+print('[ 개체수 ] \nhomo sapiens :', x_homo.shape[0], '\nCulex : ', x_culex.shape[0], '\nHaemagogus : ', x_haemagogus.shape[0], '\nOvis aries :', x_ovis.shape[0], '\nMus musculus : ', x_mus.shape[0]\
+    ,'\nSciuridae : ', x_sciuridae.shape[0])
+
 print('acc : ', acc)
 
 random_index = np.random.randint(0, x.shape[0])
@@ -75,11 +89,10 @@ x_pred = x[random_index].reshape(1, -1)
 y_pred = np.argmax(model.predict(x_pred), axis=1)
 
 def Speices(x):
-    index=['Homo Sapiens','Culex','Haemagogus']
+    index=['Homo Sapiens','Culex','Haemagogus', 'Ovis aries', 'Mus musculus', 'x_sciuridae']
     for i in range(len(index)):
         if x == i:
             return index[i]
     return False
-
 
 print('Random Real Speices : ', Speices(np.argmax(y[random_index].reshape(1, -1), axis=1)), '\nPredict Speices : ', Speices(y_pred))
