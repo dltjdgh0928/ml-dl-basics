@@ -52,10 +52,22 @@ y_mus = np.array([4]*x_mus.shape[0])
 
 sciuridae_path = './_data/pp/Sciuridae/'
 x_sciuridae = bring(sciuridae_path)
-y_sciuridae = np.array([4]*x_sciuridae.shape[0])
+y_sciuridae = np.array([5]*x_sciuridae.shape[0])
 
-x = np.concatenate([x_homo, x_culex, x_haemagogus, x_ovis, x_mus, x_sciuridae], axis=0)
-y = np.concatenate([y_homo, y_culex, y_haemagogus, y_ovis, y_mus, y_sciuridae], axis=0)
+canis_path = './_data/pp/Canis_lupus/'
+x_canis = bring(canis_path)
+y_canis = np.array([6]*x_canis.shape[0])
+
+vulpes_path = './_data/pp/Vulpes_vulpes/'
+x_vulpes = bring(vulpes_path)
+y_vulpes = np.array([7]*x_vulpes.shape[0])
+
+sus_path = './_data/pp/Sus_scrofa/'
+x_sus = bring(sus_path)
+y_sus = np.array([8]*x_sus.shape[0])
+
+x = np.concatenate([x_homo, x_culex, x_haemagogus, x_ovis, x_mus, x_sciuridae, x_canis, x_vulpes, x_sus], axis=0)
+y = np.concatenate([y_homo, y_culex, y_haemagogus, y_ovis, y_mus, y_sciuridae, y_canis, y_vulpes, y_sus], axis=0)
 
 y = to_categorical(y)
 
@@ -81,7 +93,7 @@ model.fit(x_train, y_train, epochs=100, batch_size=3, validation_split=0.2, call
 # 4. 평가, 예측
 acc = model.evaluate(x_test, y_test)[1]
 print('[ 개체수 ] \nhomo sapiens :', x_homo.shape[0], '\nCulex : ', x_culex.shape[0], '\nHaemagogus : ', x_haemagogus.shape[0], '\nOvis aries :', x_ovis.shape[0], '\nMus musculus : ', x_mus.shape[0]\
-    ,'\nSciuridae : ', x_sciuridae.shape[0])
+    ,'\nSciuridae : ', x_sciuridae.shape[0], '\nCanis lupus : ', x_canis.shape[0], '\nVulpes vulpes : ', x_vulpes.shape[0], '\nSus crofa : ', x_sus.shape[0])
 
 print('acc : ', acc)
 
@@ -90,7 +102,7 @@ x_pred = x[random_index].reshape(1, -1)
 y_pred = np.argmax(model.predict(x_pred), axis=1)
 
 def Speices(x):
-    index=['Homo Sapiens','Culex','Haemagogus', 'Ovis aries', 'Mus musculus', 'Sciuridae']
+    index=['Homo Sapiens','Culex','Haemagogus', 'Ovis aries', 'Mus musculus', 'Sciuridae', 'Canis lupus', 'Vulpes vulpes', 'Sus crofa']
     for i in range(len(index)):
         if x == i:
             return index[i]
