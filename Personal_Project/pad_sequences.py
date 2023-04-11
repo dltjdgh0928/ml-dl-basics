@@ -28,7 +28,7 @@ def bring(path):
     all_data = all_data.T
     return all_data
 
-maxlen = 1000
+maxlen = 800
 
 homo_path = './_data/pp/homo_sapiens/'
 x_homo = bring(homo_path)
@@ -90,14 +90,16 @@ model.add(Dense(len(y[0]), activation='softmax'))
 
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
-es = EarlyStopping(monitor='val_acc', patience=40, mode='auto', restore_best_weights=True)
-model.fit(x_train, y_train, epochs=100, batch_size=3, validation_split=0.2, callbacks=[es])
+es = EarlyStopping(monitor='val_acc', patience=100, mode='auto', restore_best_weights=True)
+model.fit(x_train, y_train, epochs=1000, batch_size=3, validation_split=0.2, callbacks=[es])
 
 
 # 4. 평가, 예측
 acc = model.evaluate(x_test, y_test)[1]
-print('[ 개체수 ] \nhomo sapiens :', x_homo.shape[0], '\nCulex : ', x_culex.shape[0], '\nHaemagogus : ', x_haemagogus.shape[0], '\nOvis aries :', x_ovis.shape[0], '\nMus musculus : ', x_mus.shape[0]\
-    ,'\nSciuridae : ', x_sciuridae.shape[0], '\nCanis lupus : ', x_canis.shape[0], '\nVulpes vulpes : ', x_vulpes.shape[0], '\nSus crofa : ', x_sus.shape[0])
+print('[ 개체수 ] \nhomo sapiens :', x_homo.shape[0], '\nCulex : ', x_culex.shape[0], '\nHaemagogus : ', x_haemagogus.shape[0],\
+                 '\nOvis aries :', x_ovis.shape[0], '\nMus musculus : ', x_mus.shape[0],\
+                 '\nSciuridae : ', x_sciuridae.shape[0], '\nCanis lupus : ', x_canis.shape[0],\
+                 '\nVulpes vulpes : ', x_vulpes.shape[0], '\nSus crofa : ', x_sus.shape[0])
 
 print('\nacc : ', acc)
 

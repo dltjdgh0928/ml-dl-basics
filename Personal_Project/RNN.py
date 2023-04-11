@@ -88,7 +88,9 @@ model = Sequential()
 model.add(LSTM(32, input_shape=((maxlen-timesteps+1), timesteps)))
 model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.1))
-model.add(Dense(128))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.1))
+model.add(Dense(256))
 model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.1))
@@ -97,11 +99,10 @@ model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(len(y[0]), activation='softmax'))
 
-
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
-es = EarlyStopping(monitor='val_acc', patience=20, mode='auto', restore_best_weights=True)
-model.fit(x_train, y_train, epochs=100, batch_size=3, validation_split=0.2, callbacks=[es])
+es = EarlyStopping(monitor='val_acc', patience=100, mode='auto', restore_best_weights=True)
+model.fit(x_train, y_train, epochs=1000, batch_size=3, validation_split=0.2, callbacks=[es])
 
 
 # 4. 평가, 예측
