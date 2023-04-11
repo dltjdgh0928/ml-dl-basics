@@ -10,7 +10,6 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
 
 # 1. 데이터
-
 timesteps=3
 def split_x(data, timesteps):
     a = []
@@ -19,8 +18,6 @@ def split_x(data, timesteps):
         a.append(b)
     return np.array(a)
         
-maxlen=800
-
 def bring(path):
     data_list = []
     for filename in os.listdir(path):
@@ -28,7 +25,8 @@ def bring(path):
             with open(os.path.join(path, filename), 'r') as f:
                 data = f.read().replace('\n', '').replace(' ', '')
             data = re.sub(r"[0-9]", "", data)
-            data = data.replace('a', '1').replace('t', '2').replace('c', '3').replace('g', '4').replace('y', '5').replace('w', '6').replace('r', '7').replace('k', '8').replace('v', '9').replace('n', '10').replace('s', '11').replace('m', '12')
+            data = data.replace('a', '1').replace('t', '2').replace('c', '3').replace('g', '4').replace('y', '5').replace('w', '6')\
+                .replace('r', '7').replace('k', '8').replace('v', '9').replace('n', '10').replace('s', '11').replace('m', '12')
             data = np.array([int(i) for i in data])
             data = data.reshape(1, -1)
             data = pad_sequences(data, maxlen=maxlen, padding='pre', truncating='pre')
@@ -38,6 +36,8 @@ def bring(path):
             data_list.append(data)
     all_data = np.array(np.concatenate(data_list, axis=0))
     return all_data
+
+maxlen=800
 
 homo_path = './_data/pp/homo_sapiens/'
 x_homo = bring(homo_path)
@@ -98,7 +98,7 @@ x_pred = x[random_index].reshape(1, -1, timesteps)
 y_pred = np.argmax(model.predict(x_pred), axis=1)
 
 def Speices(x):
-    index=['Homo Sapiens','Culex','Haemagogus', 'Ovis aries', 'Mus musculus', 'x_sciuridae']
+    index=['Homo Sapiens','Culex','Haemagogus', 'Ovis aries', 'Mus musculus', 'Sciuridae']
     for i in range(len(index)):
         if x == i:
             return index[i]

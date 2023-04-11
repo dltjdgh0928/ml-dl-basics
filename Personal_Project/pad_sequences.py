@@ -17,7 +17,8 @@ def bring(path):
             with open(os.path.join(path, filename), 'r') as f:
                 data = f.read().replace('\n', '').replace(' ', '')
             data = re.sub(r"[0-9]", "", data)
-            data = data.replace('a', '1').replace('t', '2').replace('c', '3').replace('g', '4').replace('y', '5').replace('w', '6').replace('r', '7').replace('k', '8').replace('v', '9').replace('n', '10').replace('s', '11').replace('m', '12')
+            data = data.replace('a', '1').replace('t', '2').replace('c', '3').replace('g', '4').replace('y', '5').replace('w', '6')\
+                .replace('r', '7').replace('k', '8').replace('v', '9').replace('n', '10').replace('s', '11').replace('m', '12')
             data = np.array([int(i) for i in data])
             data = data.reshape(1, -1)
             data = pad_sequences(data, maxlen=maxlen, padding='pre', truncating='pre')
@@ -89,7 +90,7 @@ x_pred = x[random_index].reshape(1, -1)
 y_pred = np.argmax(model.predict(x_pred), axis=1)
 
 def Speices(x):
-    index=['Homo Sapiens','Culex','Haemagogus', 'Ovis aries', 'Mus musculus', 'x_sciuridae']
+    index=['Homo Sapiens','Culex','Haemagogus', 'Ovis aries', 'Mus musculus', 'Sciuridae']
     for i in range(len(index)):
         if x == i:
             return index[i]
