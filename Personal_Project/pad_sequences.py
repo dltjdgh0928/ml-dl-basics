@@ -5,7 +5,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM, Flatten
+from tensorflow.keras.layers import Dense, LSTM, Flatten, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
 
@@ -76,10 +76,14 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random
 
 # 2. 모델
 model = Sequential()
-model.add(Dense(32, input_shape=(maxlen,)))
 model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.1))
+model.add(Dense(128))
+model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
-model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.1))
+model.add(Dense(64))
+model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(len(y[0]), activation='softmax'))
 
@@ -95,7 +99,7 @@ acc = model.evaluate(x_test, y_test)[1]
 print('[ 개체수 ] \nhomo sapiens :', x_homo.shape[0], '\nCulex : ', x_culex.shape[0], '\nHaemagogus : ', x_haemagogus.shape[0], '\nOvis aries :', x_ovis.shape[0], '\nMus musculus : ', x_mus.shape[0]\
     ,'\nSciuridae : ', x_sciuridae.shape[0], '\nCanis lupus : ', x_canis.shape[0], '\nVulpes vulpes : ', x_vulpes.shape[0], '\nSus crofa : ', x_sus.shape[0])
 
-print('acc : ', acc)
+print('\nacc : ', acc)
 
 random_index = np.random.randint(0, x.shape[0])
 x_pred = x[random_index].reshape(1, -1)
@@ -108,4 +112,4 @@ def Speices(x):
             return index[i]
     return False
 
-print('Random Real Speices : ', Speices(np.argmax(y[random_index].reshape(1, -1), axis=1)), '\nPredict Speices : ', Speices(y_pred))
+print('\nRandom Real Speices : ', Speices(np.argmax(y[random_index].reshape(1, -1), axis=1)), '\nPredict Speices : ', Speices(y_pred))

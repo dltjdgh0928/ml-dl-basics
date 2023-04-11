@@ -5,7 +5,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM, Flatten
+from tensorflow.keras.layers import Dense, LSTM, Flatten, Bidirectional, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
 
@@ -87,11 +87,16 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random
 model = Sequential()
 model.add(LSTM(32, input_shape=((maxlen-timesteps+1), timesteps)))
 model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.1))
+model.add(Dense(128))
+model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
-model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.1))
+model.add(Dense(64))
+model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(len(y[0]), activation='softmax'))
-model.summary()
+
 
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
@@ -101,8 +106,11 @@ model.fit(x_train, y_train, epochs=100, batch_size=3, validation_split=0.2, call
 
 # 4. 평가, 예측
 acc = model.evaluate(x_test, y_test)[1]
-print('[ 개체수 ] \nhomo sapiens :', x_homo.shape[0], '\nCulex : ', x_culex.shape[0], '\nHaemagogus : ', x_haemagogus.shape[0], '\nOvis aries :', x_ovis.shape[0], '\nMus musculus : ', x_mus.shape[0]\
-    ,'\nSciuridae : ', x_sciuridae.shape[0], '\nCanis lupus : ', x_canis.shape[0], '\nVulpes vulpes : ', x_vulpes.shape[0], '\nSus crofa : ', x_sus.shape[0])
+print('[ 개체수 ] \nhomo sapiens :', x_homo.shape[0], '\nCulex : ', x_culex.shape[0], '\nHaemagogus : ', x_haemagogus.shape[0],\
+                 '\nOvis aries :', x_ovis.shape[0], '\nMus musculus : ', x_mus.shape[0],\
+                 '\nSciuridae : ', x_sciuridae.shape[0], '\nCanis lupus : ', x_canis.shape[0],\
+                 '\nVulpes vulpes : ', x_vulpes.shape[0], '\nSus crofa : ', x_sus.shape[0])
+
 print('\nacc : ', acc)
 
 random_index = np.random.randint(0, x.shape[0])
