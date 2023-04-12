@@ -85,7 +85,7 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random
 
 # 2. 모델
 model = Sequential()
-model.add(Embedding(input_dim=9, output_dim=timesteps, input_shape=((maxlen-timesteps+1),)))
+model.add(Embedding(input_dim=9, output_dim=64, input_shape=((maxlen-timesteps+1),timesteps)))
 model.add(Conv1D(64, 2, activation='relu'))
 model.add(Flatten())
 model.add(Dense(64, activation='relu'))
