@@ -5,7 +5,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM, Flatten, Bidirectional, Dropout, SimpleRNN, Embedding, Conv1D, GRU
+from tensorflow.keras.layers import Dense, LSTM, Flatten, Bidirectional, Dropout, SimpleRNN, Embedding, Conv1D, GRU, BatchNormalization
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
 
@@ -86,21 +86,15 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random
 # 2. 모델
 model = Sequential()
 model.add(Embedding(input_dim=9, output_dim=64, input_shape=((maxlen-timesteps+1),timesteps)))
-model.add(Conv1D(64, 2, activation='relu'))
+model.add(Conv1D(128, 2, activation='relu'))
 model.add(Flatten())
 model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.1))
-model.add(Dense(64, activation='relu'))
+model.add(Dense(256, activation='relu', use_bias=False))
+model.add(BatchNormalization())
+model.add(Dense(128, activation='relu', use_bias=False))
 model.add(Dropout(0.1))
-model.add(Dense(64))
-model.add(Dropout(0.1))
-model.add(Dense(64, activation='relu'))
-model.add(Dropout(0.1))
-model.add(Dense(256))
-model.add(Dropout(0.1))
-model.add(Dense(64))
-model.add(Dropout(0.1))
-model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
 model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
 model.add(Dense(len(y[0]), activation='softmax'))
@@ -108,7 +102,7 @@ model.summary()
 
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
-es = EarlyStopping(monitor='val_acc', patience=100, mode='auto', restore_best_weights=True)
+es = EarlyStopping(monitor='val_acc', patience=10, mode='auto', restore_best_weights=True)
 model.fit(x_train, y_train, epochs=1000, batch_size=3, validation_split=0.2, callbacks=[es])
 
 

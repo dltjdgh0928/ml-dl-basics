@@ -5,7 +5,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM, Flatten, Dropout, Conv1D, Embedding
+from tensorflow.keras.layers import Dense, LSTM, Flatten, Dropout, Conv1D, Embedding, GRU
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
 
@@ -92,15 +92,12 @@ model.add(Dropout(0.1))
 model.add(Conv1D(64, 2, activation='relu'))
 model.add(Dropout(0.1))
 model.add(Conv1D(64, 2, activation='relu'))
+model.add(GRU(64))
 model.add(Flatten())
-model.add(Dropout(0.1))
-model.add(Dense(64))
 model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.1))
-model.add(Dense(128))
-model.add(Dropout(0.1))
-model.add(Dense(64))
+model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.1))
@@ -110,7 +107,7 @@ model.summary()
 
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
-es = EarlyStopping(monitor='val_acc', patience=100, mode='auto', restore_best_weights=True)
+es = EarlyStopping(monitor='val_acc', patience=10, mode='auto', restore_best_weights=True)
 model.fit(x_train, y_train, epochs=1000, batch_size=3, validation_split=0.2, callbacks=[es])
 
 
