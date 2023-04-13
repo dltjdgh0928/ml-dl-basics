@@ -95,8 +95,6 @@ model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.1))
 model.add(Dense(64, activation='relu'))
-model.add(Dropout(0.1))
-model.add(Dense(64, activation='relu'))
 model.add(Dense(len(y[0]), activation='softmax'))
 model.summary()
 
