@@ -1,12 +1,30 @@
+# 분류데이터들 싹 모아서 테스트
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from sklearn.svm import LinearSVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 import numpy as np
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_iris, load_breast_cancer, load_diabetes, load_digits, fetch_covtype, load_wine
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 
-# 1. 데이터
-# datasets = load_iris()
-# x = datasets.data
-# y = datasets['target']
-x, y = load_iris(return_X_y=True)
 
-print(x.shape, y.shape)     # (150, 4) (150,)
+index1 = [load_iris, load_breast_cancer, load_diabetes, load_digits, fetch_covtype, load_wine]
+
+index2 = [LinearSVC(max_iter=1000), LogisticRegression(max_iter=1000), DecisionTreeClassifier(max_depth=1000), RandomForestClassifier(max_depth=1000)]
+
+scaler = MinMaxScaler()
+
+for i in index1:
+    x, y = i(return_X_y=True)
+    x = scaler.fit_transform(x)
+    for j in index2:
+        model = j
+        model.fit(x, y)
+        results = model.score(x, y)
+        print(i.__name__, type(j).__name__, results)
+
+
 
 
