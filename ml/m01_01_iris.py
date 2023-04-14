@@ -6,13 +6,15 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 import numpy as np
-from sklearn.datasets import load_iris, load_breast_cancer, load_diabetes, load_digits, fetch_covtype, load_wine
+from sklearn.datasets import load_iris, load_breast_cancer, load_digits, fetch_covtype, load_wine
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+import warnings
+warnings.filterwarnings(action='ignore')
 
 
-index1 = [load_iris, load_breast_cancer, load_diabetes, load_digits, fetch_covtype, load_wine]
+index1 = [load_iris, load_breast_cancer, load_digits, fetch_covtype, load_wine]
 
-index2 = [LinearSVC(max_iter=1000), LogisticRegression(max_iter=1000), DecisionTreeClassifier(max_depth=1000), RandomForestClassifier(max_depth=1000)]
+index2 = [LinearSVC(max_iter=100000), LogisticRegression(max_iter=100000), DecisionTreeClassifier(max_depth=1000), RandomForestClassifier(max_depth=1000)]
 
 scaler = MinMaxScaler()
 

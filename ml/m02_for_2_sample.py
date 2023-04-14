@@ -9,6 +9,7 @@ from sklearn.datasets import load_iris, load_breast_cancer, load_diabetes, load_
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 import warnings
 warnings.filterwarnings(action='ignore')
+from sklearn.metrics import accuracy_score, r2_score
 
 data_list = [load_iris(return_X_y=True), load_breast_cancer(return_X_y=True), load_wine(return_X_y=True)]
 
@@ -26,3 +27,6 @@ for i, v in enumerate(data_list):
         model.fit(x, y)
         results = model.score(x, y)
         print(model_name_list[j], results)
+        y_predict = model.predict(x)
+        acc = accuracy_score(y, y_predict)
+        print(model_name_list[j], 'acc : ', acc)
