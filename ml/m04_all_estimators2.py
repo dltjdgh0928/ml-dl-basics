@@ -23,7 +23,7 @@ x_test = scaler.transform(x_test)
 # 2. 모델구성
 # model = RandomForestRegressor(n_jobs=4)
 # allAlgorithms = all_estimators(type_filter='regressor')
-allAlgorithms = all_estimators(type_filter='classifier')
+allAlgorithms = all_estimators(type_filter='classifier')   
 
 print('allAlgorithms : ', allAlgorithms)
 print('모델의 갯수 : ', len(allAlgorithms))
