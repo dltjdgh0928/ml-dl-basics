@@ -32,7 +32,7 @@ for i in range(len(data_list)):
                 print(data_list[i].__name__, name, results)
             except:
                 print(data_list[i].__name__, name, 'set default value first')
-        print(data_list[i].__name__, max_name, 'max_score :', max_score)
+        print(data_list[i].__name__, 'max_score :', max_name, max_score)
     elif 4<=i<6:
         x, y = data_list[i](return_X_y=True)
         for name, algorithm in algorithms_regressor:
@@ -46,7 +46,7 @@ for i in range(len(data_list)):
                 print(data_list[i].__name__, name, results)
             except:
                 print(data_list[i].__name__, name, 'set default value first')
-        print(data_list[i].__name__, max_name, 'max_score :', max_score)
+        print(data_list[i].__name__, 'max_score :', max_name, max_score)
     elif i==6:
         x = data_list[i].drop(['count'], axis=1)
         y = data_list[i]['count']
@@ -61,7 +61,7 @@ for i in range(len(data_list)):
                 print('ddarung', name, results)
             except:
                 print('ddarung', name, 'set deault value first')
-        print(data_list[i].__name__, max_name, 'max_score :', max_score)
+        print(data_list[i].__name__, 'max_score :', max_name,  max_score)
         
     else:
         x = data_list[i].drop(['casual', 'registered', 'count'], axis=1)
@@ -77,5 +77,5 @@ for i in range(len(data_list)):
                 print('ddarung', name, results)
             except:
                 print('ddarung', name, 'set deault value first')
-        print(data_list[i].__name__, max_name, 'max_score :', max_score)
+        print(data_list[i].__name__, 'max_score :', max_name, max_score)
                 
