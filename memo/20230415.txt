@@ -1,0 +1,37 @@
+1. m01_01_iris
+iris
+breast_cancer
+digits
+wine
+
+linearSVC
+LogistciRegression
+DecisionTreeClassifier
+RandomForestClassifier
+
+(4x4)반복문 만들어서 돌리기
+enumerate없이
+
+2. m01_08_boston
+fetch_california_housing
+load_diabetes
+따릉
+캐글바이크
+
+DecisionTreeRegressor
+RandomForestRegressor
+로 반복문 돌리기
+ 
+3. m02_for_2_sample
+enumerate 활용해서 이름나오게 1번해보기
+
+4. m04_all_estimators
+iris
+breast_cancer
+digits
+wine 는 분류모델 41개 쓰고
+
+ml01_08_boston
+fetch_california_housing
+따릉
+캐글바이크 는 회귀모델 55개 써보기
