@@ -24,6 +24,7 @@ max_score=0
 max_name=''
 
 scaler_list = [RobustScaler(), StandardScaler(), MinMaxScaler(), MaxAbsScaler()]
+
 n_split = 10
 kf = KFold(n_splits=n_split, shuffle=True, random_state=123)
 
@@ -37,8 +38,8 @@ for i in range(len(data_list)):
                 try:
                     model = algorithm()
                     results = cross_val_score(model, x, y, cv=kf)
-                    if max_score<np.mean(results):
-                        max_score=np.mean(results)
+                    if max_score<round(np.mean(results), 5):
+                        max_score=round(np.mean(results), 5)
                         max_name=name
                     # print(type(j).__name__, data_list[i].__name__, name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
                 except:
@@ -57,8 +58,8 @@ for i in range(len(data_list)):
                         del model
                         model = GaussianProcessRegressor(alpha=1000)
                     results = cross_val_score(model, x, y, cv=kf)
-                    if max_score<np.mena(results):
-                        max_score=np.mean(results)
+                    if max_score<round(np.mean(results), 5):
+                        max_score=round(np.mean(results), 5)
                         max_name=name
                     # print(type(j).__name__, data_list[i].__name__, name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
                 except:
@@ -75,8 +76,8 @@ for i in range(len(data_list)):
                 try:
                     model = algorithm()
                     results = model.score(model, x, y, cv=kf)
-                    if max_score<np.mean(results):
-                        max_score=np.mean(results)
+                    if max_score<round(np.mean(results), 5):
+                        max_score=round(np.mean(results), 5)
                         max_name=name
                     # print(type(j).__name__, 'ddarung', name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
                 except:
@@ -96,8 +97,8 @@ for i in range(len(data_list)):
                         del model
                         model = QuantileRegressor(alpha=1000)
                     results = cross_val_score(model, x, y, cv=kf)
-                    if max_score<np.mean(results):
-                        max_score=np.mean(results)
+                    if max_score<round(np.mean(results), 5):
+                        max_score=round(np.mean(results), 5)
                         max_name=name
                     # print(type(j).__name__, 'kaggle', name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
                 except:
