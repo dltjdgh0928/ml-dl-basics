@@ -18,7 +18,7 @@ kf = KFold(n_splits=n_split, shuffle=True, random_state=123)
 model = RandomForestRegressor()
 
 # 3, 4. 컴파일, 훈련, 평가, 예측
-scores = cross_val_score(model, x, y, cv=kf)
+scores = cross_val_score(model, x, y, cv=kf, n_jobs=-1)
 print(scores)
 
 print('ACC : ', scores, '\n mean of cross_val_score : ', round(np.mean(scores), 4))

@@ -9,7 +9,8 @@ path = './_data/kaggle_bike/'
 data = pd.read_csv(path + 'train.csv', index_col=0).dropna()
 x = data.drop(['casual', 'registered', 'count'], axis=1)
 y = data['count']
-
+x=x[:100]
+y[:100]
 n_split = 5
 kf = KFold(n_splits=n_split, shuffle=True, random_state=123)
 # kf = KFold()

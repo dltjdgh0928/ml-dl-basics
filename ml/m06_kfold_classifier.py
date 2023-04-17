@@ -40,14 +40,13 @@ for i in range(len(data_list)):
                     if max_score<np.mean(results):
                         max_score=np.mean(results)
                         max_name=name
-                    print(type(j).__name__, data_list[i].__name__, name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
+                    # print(type(j).__name__, data_list[i].__name__, name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
                 except:
-                    print(type(j).__name__, data_list[i].__name__, name, 'set default value first')
-            print('\n', type(j).__name__, data_list[i].__name__, 'max_score :', max_name, max_score, '\n')
+                    # print(type(j).__name__, data_list[i].__name__, name, 'set default value first')
+                    continue
+            print('\n', type(j).__name__, ' - ', data_list[i].__name__, 'max_score :', max_name, max_score, '\n')
     elif 4<=i<6:
         x, y = data_list[i](return_X_y=True)
-        x = x[:100]
-        y = y[:100]
         for j in scaler_list:
             scaler = j
             x = scaler.fit_transform(x)
@@ -61,15 +60,14 @@ for i in range(len(data_list)):
                     if max_score<np.mena(results):
                         max_score=np.mean(results)
                         max_name=name
-                    print(type(j).__name__, data_list[i].__name__, name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
+                    # print(type(j).__name__, data_list[i].__name__, name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
                 except:
-                    print(type(j).__name__, data_list[i].__name__, name, 'set default value first')
-            print('\n', type(j).__name__, data_list[i].__name__, 'max_score :', max_name, max_score, '\n')
+                    # print(type(j).__name__, data_list[i].__name__, name, 'set default value first')
+                    continue
+            print('\n', type(j).__name__, ' - ', data_list[i].__name__, 'max_score :', max_name, max_score, '\n')
     elif i==6:
         x = data_list[i].drop(['count'], axis=1)
         y = data_list[i]['count']
-        x = x[:100]
-        y = y[:100]
         for j in scaler_list:
             scaler = j
             x = scaler.fit_transform(x)
@@ -80,15 +78,14 @@ for i in range(len(data_list)):
                     if max_score<np.mean(results):
                         max_score=np.mean(results)
                         max_name=name
-                    print(type(j).__name__, 'ddarung', name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
+                    # print(type(j).__name__, 'ddarung', name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
                 except:
-                    print(type(j).__name__, 'ddarung', name, 'set deault value first')
-            print('\n', type(j).__name__, 'ddarung max_score :', max_name,  max_score, '\n')
+                    # print(type(j).__name__, 'ddarung', name, 'set deault value first')
+                    continue
+            print('\n', type(j).__name__, ' - ', 'ddarung max_score :', max_name,  max_score, '\n')
     else:
         x = data_list[i].drop(['casual', 'registered', 'count'], axis=1)
         y = data_list[i]['count']
-        x = x[:100]
-        y = y[:100]
         for j in data_list:
             scaler = j
             x = scaler.fit_transform
@@ -102,7 +99,8 @@ for i in range(len(data_list)):
                     if max_score<np.mean(results):
                         max_score=np.mean(results)
                         max_name=name
-                    print(type(j).__name__, 'kaggle', name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
+                    # print(type(j).__name__, 'kaggle', name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
                 except:
-                    print(type(j).__name__, 'kaggle', name, 'set deault value first')
-            print('\n', type(j).__name__, 'kaggle max_score :', max_name, max_score, '\n')
+                    # print(type(j).__name__, 'kaggle', name, 'set deault value first')
+                    continue
+            print('\n', type(j).__name__, ' - ', 'kaggle max_score :', max_name, max_score, '\n')
