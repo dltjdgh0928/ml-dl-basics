@@ -6,7 +6,7 @@ import warnings
 from sklearn.linear_model import QuantileRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.preprocessing import RobustScaler, StandardScaler, MinMaxScaler, MaxAbsScaler
-from sklearn.model_selection import KFold, cross_val_score
+from sklearn.model_selection import KFold, cross_val_score, cross_val_predict
 warnings.filterwarnings(action='ignore')
 
 path_ddarung = './_data/ddarung/'
@@ -74,7 +74,7 @@ for i in range(len(data_list)):
             for name, algorithm in algorithms_regressor:
                 try:
                     model = algorithm()
-                    results = model.score(model, x, y, cv=kf)
+                    results = cross_val_score(model, x, y, cv=kf)
                     if max_score<np.mean(results):
                         max_score=np.mean(results)
                         max_name=name
