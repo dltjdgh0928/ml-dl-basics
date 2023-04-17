@@ -44,7 +44,7 @@ for i in range(len(data_list)):
                 except:
                     # print(type(j).__name__, data_list[i].__name__, name, 'set default value first')
                     continue
-            print('\n', type(j).__name__, ' - ', data_list[i].__name__, 'max_score :', max_name, max_score, '\n')
+            print('\n', type(j).__name__, ' - ', data_list[i].__name__, 'max_score :', max_name, max_score)
     elif 4<=i<6:
         x, y = data_list[i](return_X_y=True)
         for j in scaler_list:
@@ -64,7 +64,7 @@ for i in range(len(data_list)):
                 except:
                     # print(type(j).__name__, data_list[i].__name__, name, 'set default value first')
                     continue
-            print('\n', type(j).__name__, ' - ', data_list[i].__name__, 'max_score :', max_name, max_score, '\n')
+            print('\n', type(j).__name__, ' - ', data_list[i].__name__, 'max_score :', max_name, max_score)
     elif i==6:
         x = data_list[i].drop(['count'], axis=1)
         y = data_list[i]['count']
@@ -82,7 +82,7 @@ for i in range(len(data_list)):
                 except:
                     # print(type(j).__name__, 'ddarung', name, 'set deault value first')
                     continue
-            print('\n', type(j).__name__, ' - ', 'ddarung max_score :', max_name,  max_score, '\n')
+            print('\n', type(j).__name__, ' - ', 'ddarung max_score :', max_name,  max_score)
     else:
         x = data_list[i].drop(['casual', 'registered', 'count'], axis=1)
         y = data_list[i]['count']
@@ -103,4 +103,4 @@ for i in range(len(data_list)):
                 except:
                     # print(type(j).__name__, 'kaggle', name, 'set deault value first')
                     continue
-            print('\n', type(j).__name__, ' - ', 'kaggle max_score :', max_name, max_score, '\n')
+            print('\n', type(j).__name__, ' - ', 'kaggle max_score :', max_name, max_score)
