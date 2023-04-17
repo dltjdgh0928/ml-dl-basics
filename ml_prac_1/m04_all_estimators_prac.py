@@ -2,6 +2,8 @@ from sklearn.utils import all_estimators
 from sklearn.datasets import load_iris, load_breast_cancer, load_digits, load_wine, fetch_california_housing, load_diabetes
 import pandas as pd
 import warnings
+from sklearn.linear_model import QuantileRegressor
+from sklearn.gaussian_process import GaussianProcessRegressor
 warnings.filterwarnings(action='ignore')
 
 path_ddarung = './_data/ddarung/'
@@ -21,6 +23,8 @@ max_name=''
 for i in range(len(data_list)):
     if i<4:
         x, y = data_list[i](return_X_y=True)
+        x=x[:100]
+        y=y[:100]
         for name, algorithm in algorithms_classifier:
             try:
                 model = algorithm()
@@ -35,9 +39,14 @@ for i in range(len(data_list)):
         print('\n', data_list[i].__name__, 'max_score :', max_name, max_score, '\n')
     elif 4<=i<6:
         x, y = data_list[i](return_X_y=True)
+        x=x[:100]
+        y=y[:100]
         for name, algorithm in algorithms_regressor:
             try:
                 model = algorithm()
+                if name=="GaussianProcessRegressor":
+                    del model
+                    model = GaussianProcessRegressor(alpha=1000)
                 model.fit(x, y)
                 results = model.score(x, y)
                 if max_score<results:
@@ -50,6 +59,8 @@ for i in range(len(data_list)):
     elif i==6:
         x = data_list[i].drop(['count'], axis=1)
         y = data_list[i]['count']
+        x=x[:100]
+        y=y[:100]
         for name, algorithm in algorithms_regressor:
             try:
                 model = algorithm()
@@ -66,9 +77,14 @@ for i in range(len(data_list)):
     else:
         x = data_list[i].drop(['casual', 'registered', 'count'], axis=1)
         y = data_list[i]['count']
+        x=x[:100]
+        y=y[:100]
         for name, algorithm in algorithms_regressor:
             try:
                 model = algorithm()
+                if name=="QuantileRegressor":
+                    del model
+                    model = QuantileRegressor(alpha=1000)
                 model.fit(x, y)
                 results = model.score(x, y)
                 if max_score<results:
@@ -77,5 +93,4 @@ for i in range(len(data_list)):
                 print('kaggle', name, results)
             except:
                 print('kaggle', name, 'set deault value first')
-        print('\n', 'kaggle max_score :', max_name, max_score), '\n'
-                
+        print('\n', 'kaggle max_score :', max_name, max_score, '\n')
