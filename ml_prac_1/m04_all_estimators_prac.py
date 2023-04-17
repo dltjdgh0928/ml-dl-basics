@@ -61,7 +61,7 @@ for i in range(len(data_list)):
                 print('ddarung', name, results)
             except:
                 print('ddarung', name, 'set deault value first')
-        print('\n', data_list[i].__name__, 'max_score :', max_name,  max_score, '\n')
+        print('\n', 'ddarung max_score :', max_name,  max_score, '\n')
         
     else:
         x = data_list[i].drop(['casual', 'registered', 'count'], axis=1)
@@ -74,8 +74,8 @@ for i in range(len(data_list)):
                 if max_score<results:
                     max_score=results
                     max_name=name
-                print('ddarung', name, results)
+                print('kaggle', name, results)
             except:
-                print('ddarung', name, 'set deault value first')
-        print('\n', data_list[i].__name__, 'max_score :', max_name, max_score), '\n'
+                print('kaggle', name, 'set deault value first')
+        print('\n', 'kaggle max_score :', max_name, max_score), '\n'
                 
