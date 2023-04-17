@@ -67,11 +67,8 @@ for i in range(len(data_list)):
             for name, algorithm in algorithms_regressor:
                 try:
                     model = algorithm()
-                    if name=="GaussianProcessRegressor":
-                        del model
-                        model = GaussianProcessRegressor(alpha=1000)
                     results = cross_val_score(model, x, y, cv=kf)
-                    if max_score<np.mena(results):
+                    if max_score<np.mean(results):
                         max_score=np.mean(results)
                         max_name=name
                     y_predict = cross_val_predict(model, x_test, y_test)
@@ -121,9 +118,6 @@ for i in range(len(data_list)):
             for name, algorithm in algorithms_regressor:
                 try:
                     model = algorithm()
-                    if name=="QuantileRegressor":
-                        del model
-                        model = QuantileRegressor(alpha=1000)
                     results = cross_val_score(model, x, y, cv=kf)
                     if max_score<np.mean(results):
                         max_score=np.mean(results)
