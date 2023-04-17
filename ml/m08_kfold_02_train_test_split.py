@@ -140,7 +140,7 @@ for i in range(len(data_list)):
                     continue
             print('\n', type(j).__name__, ' - ', 'kaggle max_score :', max_name, max_score)
             print('\n', type(j).__name__, ' - ', data_list[i].__name__, 'max_predict_r2 :', max_r2_name, max_r2, '\n')
-            
+
 
 
 
