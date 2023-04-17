@@ -1,0 +1,19 @@
+데이터들이 독립적이고 동일한 분포를 가진 경우
+KFold
+RepeatedKFold
+Leave One Out (LOO)
+Leave P Out (LPO)
+ShuffleSplit
+
+데이터의 분포가 다른 경우
+StratifiedKFold
+StratifiedShuffleSplit
+
+데이터가 그룹화되어 있는 경우
+GroupKFold
+LeaveOneGroupOut
+LeavePGroupsOut
+GroupShuffleSplit
+
+데이터가 시계열 데이터인 경우
+TimeSeriesSplit
