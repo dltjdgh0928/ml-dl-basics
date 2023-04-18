@@ -7,7 +7,7 @@ import time
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-
+  
 # 1. 데이터
 path_d = './_data/ddarung/'
 path_k = './_data/kaggle_bike/'
