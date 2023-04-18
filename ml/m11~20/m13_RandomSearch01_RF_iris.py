@@ -14,7 +14,7 @@ path_k = './_data/kaggle_bike/'
 ddarung = pd.read_csv(path_d + 'train.csv', index_col=0).dropna()
 kaggle = pd.read_csv(path_k + 'train.csv', index_col=0).dropna()
 
-data_list = [load_iris, load_breast_cancer, load_digits, load_wine, fetch_covtype ,fetch_california_housing, load_diabetes, ddarung, kaggle]
+data_list = [load_iris, load_breast_cancer, load_digits, load_wine, fetch_covtype, fetch_california_housing, load_diabetes, ddarung, kaggle]
 
 parameter = [
     {'n_estimators':[100, 200], 'max_depth':[6,8,10], 'min_samples_leaf':[1,10]}, 
@@ -25,27 +25,27 @@ parameter = [
 ]
 
 n_splits=10
-kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
-
+stkf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
+kf = KFold(n_splits=n_splits, shuffle=True, random_state=123)
 scaler = RobustScaler()
 
 for i in range(len(data_list)):
-    if i<5:
-        x, y = data_list[i](return_X_y=True)
-        x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=123)
-        x_train = scaler.fit_transform(x_train)
-        x_test = scaler.transform(x_test)
-        model = RandomizedSearchCV(RandomForestClassifier(), parameter, cv=kf, refit=True)
-        st = time.time()
-        model.fit(x_train, y_train)
-        et = time.time()
-        print(data_list[i].__name__, 'time : ', et-st, 's')
-        print(data_list[i].__name__, 'y_pred acc : ', accuracy_score(y_test, model.predict(x_test)))
-        print(data_list[i].__name__, 'best estimator : ', model.best_estimator_)
-        print(data_list[i].__name__, 'best params : ', model.best_params_)
-        print(data_list[i].__name__, 'best score : ', model.best_score_)
-        print(data_list[i].__name__, 'y_pred_best acc : ', accuracy_score(y_test, model.best_estimator_.predict(x_test)))
-    elif 5<=i<7:
+    # if i<5:
+    #     x, y = data_list[i](return_X_y=True)
+    #     x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=123)
+    #     x_train = scaler.fit_transform(x_train)
+    #     x_test = scaler.transform(x_test)
+    #     model = RandomizedSearchCV(RandomForestClassifier(), parameter, cv=stkf, refit=True)
+    #     st = time.time()
+    #     model.fit(x_train, y_train)
+    #     et = time.time()
+    #     print(data_list[i].__name__, 'time : ', et-st, 's')
+    #     print(data_list[i].__name__, 'y_pred acc : ', accuracy_score(y_test, model.predict(x_test)))
+    #     print(data_list[i].__name__, 'best estimator : ', model.best_estimator_)
+    #     print(data_list[i].__name__, 'best params : ', model.best_params_)
+    #     print(data_list[i].__name__, 'best score : ', model.best_score_)
+    #     print(data_list[i].__name__, 'y_pred_best acc : ', accuracy_score(y_test, model.best_estimator_.predict(x_test)))
+    if 5<=i<7:
         x, y = data_list[i](return_X_y=True)
         x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=123)
         x_train = scaler.fit_transform(x_train)
@@ -76,7 +76,7 @@ for i in range(len(data_list)):
         print('ddarung best params : ', model.best_params_)
         print('ddarung best score : ', model.best_score_)
         print('ddarung y_pred_best r2 : ', r2_score(y_test, model.best_estimator_.predict(x_test)))
-    else:
+    elif i==8:
         x = kaggle.drop(['casual', 'registered', 'count'], axis=1)
         y = kaggle['count']
         x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=123)

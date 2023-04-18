@@ -23,7 +23,7 @@ parameters = [
 ]
 
 # GridSearch CV default : StratifiedKFold 
-model = RandomizedSearchCV(SVC(), parameters, cv=5, verbose=1, refit=True, n_jobs=-1)
+model = RandomizedSearchCV(SVC(), parameters, cv=5, verbose=1, refit=True, n_jobs=-1, n_iter=5)
 start_time = time.time()
 model.fit(x_train, y_train)
 end_time = time.time()
