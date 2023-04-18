@@ -1,9 +1,10 @@
 import numpy as np
 from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split, KFold, cross_val_score, GridSearchCV, StratifiedKFold
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, GridSearchCV, StratifiedKFold, RandomizedSearchCV
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
 import time
+import pandas as pd
 
 # 1. 데이터
 x, y = load_iris(return_X_y=True)
@@ -22,7 +23,7 @@ parameters = [
 ]
 
 # GridSearch CV default : StratifiedKFold 
-model = GridSearchCV(SVC(), parameters, cv=5, verbose=1, refit=True, n_jobs=-1)
+model = RandomizedSearchCV(SVC(), parameters, cv=5, verbose=1, refit=True, n_jobs=-1)
 start_time = time.time()
 model.fit(x_train, y_train)
 end_time = time.time()
@@ -39,3 +40,12 @@ y_pred_best = model.best_estimator_.predict(x_test)
 print('y_pred_best acc', accuracy_score(y_test, y_pred_best))
 
 print('time : ', round(end_time-start_time, 2),'s')
+
+############################################################
+# print(pd.DataFrame(model.cv_results_))
+print(pd.DataFrame(model.cv_results_).sort_values('rank_test_score', ascending=True))
+print(pd.DataFrame(model.cv_results_).columns)
+
+path = './temp/'
+pd.DataFrame(model.cv_results_).sort_values('rank_test_score', ascending=True)\
+    .to_csv(path+'m12_RandomSearch3.csv')
