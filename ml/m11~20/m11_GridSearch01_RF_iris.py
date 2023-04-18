@@ -24,6 +24,7 @@ parameter = [
 ]
 
 n_splits=10
+stkf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 scaler = RobustScaler()
@@ -34,7 +35,7 @@ for i in range(len(data_list)):
         x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=123)
         x_train = scaler.fit_transform(x_train)
         x_test = scaler.transform(x_test)
-        model = GridSearchCV(RandomForestClassifier(), parameter, cv=kf, refit=True)
+        model = GridSearchCV(RandomForestClassifier(), parameter, cv=stkf, refit=True)
         st = time.time()
         model.fit(x_train, y_train)
         et = time.time()
