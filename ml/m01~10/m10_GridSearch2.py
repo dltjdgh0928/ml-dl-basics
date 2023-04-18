@@ -31,3 +31,6 @@ print('best estimator : ', model.best_estimator_)
 print('best params : ', model.best_params_)
 print('best score : ', model.best_score_)
 print('model score : ', model.score(x_test, y_test))
+
+y_predict = model.predict(x_test)
+print('acc : ', accuracy_score(y_test, y_predict))
