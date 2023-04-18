@@ -10,7 +10,7 @@ import pandas as pd
 # 1. 데이터
 x, y = load_digits(return_X_y=True)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, random_state=337, test_size=0.2)
+x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, random_state=12345, test_size=0.2)
 
 n_splits = 5
 kf = KFold(n_splits=n_splits, shuffle=True, random_state=337)
@@ -24,7 +24,7 @@ parameters = [
 ]
 
 # GridSearch CV default : StratifiedKFold 
-model = GridSearchCV(SVC(), parameters, cv=5, verbose=1, refit=True, n_jobs=-1)
+model = HalvingGridSearchCV(SVC(), parameters, cv=5, verbose=1, refit=True, n_jobs=-1, factor=2.4)
 start_time = time.time()
 model.fit(x_train, y_train)
 end_time = time.time()
@@ -33,13 +33,7 @@ print('time : ', round(end_time-start_time, 2),'s')
 # time :  10.15 s
 # time :  4.3 s (Halving)
 
-print(x.shape, x_train.shape)       # (1797, 64) (1437, 64)
-
-'''
-print('best estimator : ', model.best_estimator_)
-print('best params : ', model.best_params_)
-print('best score : ', model.best_score_)
-print('model score : ', model.score(x_test, y_test))
+# print(x.shape, x_train.shape)       # (1797, 64) (1437, 64)
 
 y_predict = model.predict(x_test)
 print('acc : ', accuracy_score(y_test, y_predict))
@@ -48,12 +42,3 @@ y_pred_best = model.best_estimator_.predict(x_test)
 print('y_pred_best acc', accuracy_score(y_test, y_pred_best))
 
 print('time : ', round(end_time-start_time, 2),'s')
-
-############################################################
-# print(pd.DataFrame(model.cv_results_))
-print(pd.DataFrame(model.cv_results_).sort_values('rank_test_score', ascending=True))
-print(pd.DataFrame(model.cv_results_).columns)
-
-path = './temp/'
-pd.DataFrame(model.cv_results_).sort_values('rank_test_score', ascending=True)\
-    .to_csv(path+'m12_RandomSearch3.csv')'''
