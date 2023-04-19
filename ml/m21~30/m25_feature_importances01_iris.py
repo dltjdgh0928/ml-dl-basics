@@ -40,17 +40,11 @@ for i in range(len(data_list)):
 
         x_d = pd.DataFrame(x).drop([a], axis=1) 
         x_train_d, x_test_d, y_train_d, y_test_d = train_test_split(x_d, y, train_size=0.8, shuffle=True, random_state=337)
-        scaler = MinMaxScaler()
         x_train_d = scaler.fit_transform(x_train_d)
         x_test_d = scaler.transform(x_test_d)
 
-        # 2. 모델
-        model = RandomForestClassifier()
-
-        # 3. 훈련
         model.fit(x_train_d, y_train_d)
 
-        # 4. 평가, 예측
         result = model.score(x_test_d, y_test_d)
         print(data_list_name[i], f'drop {a}th col score : ', result)
 
@@ -70,13 +64,10 @@ for i in range(len(data_list)):
         x_train_d = scaler.fit_transform(x_train_d)
         x_test_d = scaler.transform(x_test_d)
 
-        # 2. 모델
         model = RandomForestRegressor()
 
-        # 3. 훈련
         model.fit(x_train_d, y_train_d)
 
-        # 4. 평가, 예측
         result = model.score(x_test_d, y_test_d)
         print(data_list_name[i], f'drop {a}th col score : ', result)
 
