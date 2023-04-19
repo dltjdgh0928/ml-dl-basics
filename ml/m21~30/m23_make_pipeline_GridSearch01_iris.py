@@ -43,6 +43,7 @@ for i in range(len(data_list)):
         max_acc = 0
         max_model = ''
         max_scaler = ''
+        max_cv=''
         for j in scaler_list:
             for k in range(len(classifier_list)):
                 pipe = make_pipeline(j, classifier_list[k])
@@ -69,6 +70,7 @@ for i in range(len(data_list)):
         max_r2 = 0
         max_model = ''
         max_scaler = ''
+        max_cv=''
         for j in scaler_list:
             for k in range(len(regressor_list)):
                 pipe = make_pipeline(j, regressor_list[k])
@@ -86,6 +88,7 @@ for i in range(len(data_list)):
                         max_acc = accuracy_score(y_test, model.predict(x_test))
                         max_model = type(k).__name__
                         max_scaler = type(j).__name__
+                        max_cv = l.__name__
                     print('\n', data_list[i].__name__, type(classifier_list[k]).__name__, type(j).__name__, l.__name__, '\nresult : ', model.score(x_test, y_test), '\nacc : ', accuracy_score(y_test, model.predict(x_test)))
         print('\n', data_list[i].__name__, '\nmax_cv : ', max_cv, '\nmax_model : ', max_model, '\nmax_scaler : ', max_scaler, '\nmax_r2 : ', max_r2)
     elif i==6:
@@ -95,6 +98,7 @@ for i in range(len(data_list)):
         max_r2 = 0
         max_model = ''
         max_scaler = ''
+        max_cv=''
         for j in scaler_list:
             for k in range(len(regressor_list)):
                 pipe = make_pipeline(j, regressor_list[k])
@@ -112,6 +116,7 @@ for i in range(len(data_list)):
                         max_acc = accuracy_score(y_test, model.predict(x_test))
                         max_model = type(k).__name__
                         max_scaler = type(j).__name__
+                        max_cv = l.__name__
                     print('\n', data_list[i].__name__, type(classifier_list[k]).__name__, type(j).__name__, l.__name__, '\nresult : ', model.score(x_test, y_test), '\nacc : ', accuracy_score(y_test, model.predict(x_test)))
         print('\n ddarung  \nmax_cv : ', max_cv, '\nmax_model : ', max_model, '\nmax_scaler : ', max_scaler, '\nmax_r2 : ', max_r2)
     elif i==7:
@@ -121,6 +126,7 @@ for i in range(len(data_list)):
         max_r2 = 0
         max_model = ''
         max_scaler = ''
+        max_cv=''
         for j in scaler_list:
             for k in range(len(regressor_list)):
                 pipe = make_pipeline(j, regressor_list[k])
@@ -138,5 +144,6 @@ for i in range(len(data_list)):
                         max_acc = accuracy_score(y_test, model.predict(x_test))
                         max_model = type(k).__name__
                         max_scaler = type(j).__name__
+                        max_cv = l.__name__
                     print('\n', data_list[i].__name__, type(classifier_list[k]).__name__, type(j).__name__, l.__name__, '\nresult : ', model.score(x_test, y_test), '\nacc : ', accuracy_score(y_test, model.predict(x_test)))
         print('\n kaggle  \nmax_cv : ', max_cv, '\nmax_model : ', max_model, '\nmax_scaler : ', max_scaler, '\nmax_r2 : ', max_r2)
