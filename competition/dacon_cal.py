@@ -82,28 +82,28 @@ for k in range(1000):
                 date = date.strftime('%m%d_%H%M%S')
                 submit_csv.to_csv(path_save + 'dacon_cal' + date + '.csv')
                 break
-            else:
-                if j==0:
-                    model = RandomForestRegressor()
-                elif j==1:
-                    model = DecisionTreeRegressor()
-                a = model.feature_importances_
-                a = a.argmin(axis=0)
-                x_train_d = pd.DataFrame(x_train).drop([a], axis=1)
-                x_test_d = pd.DataFrame(x_test).drop([a], axis=1)
-                test_csv_d = pd.DataFrame(test_csv).drop([a], axis=1)
-                model = HalvingRandomSearchCV(model_list[j], param, cv=10, verbose=1)
-                model.fit(x_train_d, y_train)
-                loss = model.score(x_test_d, y_test)
-                print('loss : ', loss)
-                print('test RMSE : ', RMSE(y_test, model.predict(x_test_d)))
-                if RMSE(y_test, model.predict(x_test_d))<0.5:
-                    submit_csv = pd.read_csv(path + 'sample_submission.csv', index_col=0)
-                    submit_csv['Calories_Burned'] = model.predict(test_csv_d)
-                    date = datetime.datetime.now()
-                    date = date.strftime('%m%d_%H%M%S')
-                    submit_csv.to_csv(path_save + 'dacon_cal' + date + '.csv')
-                    break
+            # else:
+            #     # if j==0:
+            #     #     model = RandomForestRegressor()
+            #     # elif j==1:
+            #     #     model = DecisionTreeRegressor()
+            #     a = model.feature_importances_
+            #     a = a.argmin(axis=0)
+            #     x_train_d = pd.DataFrame(x_train).drop([a], axis=1)
+            #     x_test_d = pd.DataFrame(x_test).drop([a], axis=1)
+            #     test_csv_d = pd.DataFrame(test_csv).drop([a], axis=1)
+            #     model = HalvingRandomSearchCV(model_list[j], param, cv=10, verbose=1)
+            #     model.fit(x_train_d, y_train)
+            #     loss = model.score(x_test_d, y_test)
+            #     print('loss : ', loss)
+            #     print('test RMSE : ', RMSE(y_test, model.predict(x_test_d)))
+            #     if RMSE(y_test, model.predict(x_test_d))<0.5:
+            #         submit_csv = pd.read_csv(path + 'sample_submission.csv', index_col=0)
+            #         submit_csv['Calories_Burned'] = model.predict(test_csv_d)
+            #         date = datetime.datetime.now()
+            #         date = date.strftime('%m%d_%H%M%S')
+            #         submit_csv.to_csv(path_save + 'dacon_cal' + date + '.csv')
+            #         break
 
 # model = Sequential()
 # model.add(Dense(32, input_shape=(x.shape[1],)))
