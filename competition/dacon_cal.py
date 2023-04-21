@@ -14,6 +14,19 @@ from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
 import datetime
+import warnings
+warnings.filterwarnings('ignore')
+
+scaler_list = [MinMaxScaler(), MaxAbsScaler(), StandardScaler(), RobustScaler()]
+model_list = [RandomForestRegressor(), DecisionTreeRegressor()]
+
+param_r = [
+    {'n_estimators':[100, 200, 500], 'max_depth':[10,20,50], 'min_samples_leaf':[5,10,15],'min_samples_split':[5,10]}, 
+]
+
+param_d = [
+    {'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'], 'splitter':['best', 'random'], 'max_depth':[10,20,50],'min_samples_split':[5,10]}
+]
 
 def RMSE(x, y):
     return np.sqrt(mean_squared_error(x, y))
@@ -40,44 +53,34 @@ test_csv['Height(Remainder_Inches)'] = 703*test_csv['Weight(lb)']/test_csv['Heig
 le = LabelEncoder()
 x['Gender'] = le.fit_transform(x['Gender'])
 test_csv['Gender'] = le.transform(test_csv['Gender'])
+for k in range(1000):
+    x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.75, shuffle=True, random_state=k)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.75, shuffle=True, random_state=123)
+    for i in scaler_list:
+        scaler = i
+        x_train = scaler.fit_transform(x_train)
+        x_test = scaler.transform(x_test)
+        test_csv = scaler.transform(test_csv)
 
-scaler_list = [MinMaxScaler(), MaxAbsScaler(), StandardScaler(), RobustScaler()]
-model_list = [RandomForestRegressor(), DecisionTreeRegressor()]
+        for j in range(len(model_list)):
+            if j==0:
+                param = param_r
+            elif j==1:
+                param = param_d
+            model = HalvingRandomSearchCV(model_list[j], param, cv=10, verbose=1)
+            model.fit(x_train, y_train)
 
-param_r = [
-    {'n_estimators':[100, 200, 500, 1000, 5000], 'max_depth':[10,20,50,100], 'min_samples_leaf':[5,10,15,20],'min_samples_split':[2,3,5,10]}, 
-]
-
-param_d = [
-    {'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'], 'splitter':['best', 'random'], 'max_depth':[10,20,50,100],'min_samples_split':[2,3,5,10]}
-]
-
-for i in scaler_list:
-    scaler = i
-    x_train = scaler.fit_transform(x_train)
-    x_test = scaler.transform(x_test)
-    test_csv = scaler.transform(test_csv)
-    
-    for j in range(len(model_list)):
-        if j==0:
-            param = param_r
-        elif j==1:
-            param = param_d
-        model = HalvingRandomSearchCV(model_list[j], param, cv=10, verbose=1)
-        model.fit(x_train, y_train)
-
-        loss = model.score(x_test, y_test)
-        print('loss : ', loss)
-        print('test RMSE : ', RMSE(y_test, model.predict(x_test)))
-        if RMSE(y_test, model.predict(x_test))<1:
-            submit_csv = pd.read_csv(path + 'sample_submission.csv', index_col=0)
-            submit_csv['Calories_Burned'] = model.predict(test_csv)
-            date = datetime.datetime.now()
-            date = date.strftime('%m%d_%H%M%S')
-            submit_csv.to_csv(path_save + 'dacon_cal' + date + '.csv')
-
+            loss = model.score(x_test, y_test)
+            print('loss : ', loss)
+            print('test RMSE : ', RMSE(y_test, model.predict(x_test)))
+            if RMSE(y_test, model.predict(x_test))<1:
+                submit_csv = pd.read_csv(path + 'sample_submission.csv', index_col=0)
+                submit_csv['Calories_Burned'] = model.predict(test_csv)
+                date = datetime.datetime.now()
+                date = date.strftime('%m%d_%H%M%S')
+                submit_csv.to_csv(path_save + 'dacon_cal' + date + '.csv')
+                break
+            
 # model = Sequential()
 # model.add(Dense(32, input_shape=(x.shape[1],)))
 # model.add(Dense(32, activation='relu'))
