@@ -22,8 +22,20 @@ warnings.filterwarnings('ignore')
 scaler_list = [MinMaxScaler(), MaxAbsScaler(), StandardScaler(), RobustScaler()]
 model_list = [RandomForestRegressor(), DecisionTreeRegressor()]
 
+param_r = [
+    {'n_estimators':[100, 200, 500], 'max_depth':[10,20,50], 'min_samples_leaf':[5,10,15],'min_samples_split':[5,10]}, 
+]
+
+param_d = [
+    {'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'], 'splitter':['best', 'random'], 'max_depth':[10,20,50],'min_samples_split':[5,10]}
+]
+
 def RMSE(x, y):
     return np.sqrt(mean_squared_error(x, y))
+
+# n_splits = 10
+# kf = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+# regressor = all_estimators(type_filter='regressor')
 
 path = './_data/dacon_cal/'
 path_save = './_save/dacon_cal/'
@@ -46,17 +58,17 @@ le = LabelEncoder()
 x['Gender'] = le.fit_transform(x['Gender'])
 test_csv['Gender'] = le.transform(test_csv['Gender'])
 
-min_rmse = 1
 
-for k in range(1000):
-    x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.75, shuffle=True, random_state=k)
+def objective(trial, x, y, test_csv):
+    min_rmse = 1
+    for k in range(1000):
+        x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.75, shuffle=True, random_state=k)
 
-    for i in scaler_list:
-        scaler = i
-        x_train = scaler.fit_transform(x_train)
-        x_test = scaler.transform(x_test)
-        test_csv = scaler.transform(test_csv)
-        def objective(trial, x_train, y_train, x_test, y_test, min_rmse):
+        for i in scaler_list:
+            scaler = i
+            x_train = scaler.fit_transform(x_train)
+            x_test = scaler.transform(x_test)
+            test_csv = scaler.transform(test_csv)
             alpha = trial.suggest_loguniform('alpha', 0.0001, 1)
             n_restarts_optimizer  = trial.suggest_int('n_restarts_optimizer', 3, 10)
             optimizer = trial.suggest_categorical('optimizer', ['fmin_l_bfgs_b', 'Powell', 'CG'])
@@ -66,26 +78,25 @@ for k in range(1000):
                 n_restarts_optimizer=n_restarts_optimizer,
                 optimizer=optimizer,
             )
-            
+
             model.fit(x_train, y_train)
-            
+
             print('GPR result : ', model.score(x_test, y_test))
-            
+
             y_pred = model.predict(x_test)
             rmse = RMSE(y_test, y_pred)
             print('GPR RMSE : ', rmse)
-            if rmse < 0.3:
+
+            if rmse < 1 and rmse < min_rmse:
                 submit_csv['Calories_Burned'] = model.predict(test_csv)
                 date = datetime.datetime.now()
                 date = date.strftime('%m%d_%H%M%S')
-                submit_csv.to_csv(path_save + date + str(round(rmse, 5)) + '.csv')
-                # if rmse < min_rmse:
-                #     min_rmse = rmse
-                #     submit_csv.to_csv(path_save_min + date + str(round(rmse, 5)) + '.csv')
-            return rmse
-        opt = optuna.create_study(direction='minimize')
-        opt.optimize(lambda trial: objective(trial, x_train, y_train, x_test, y_test, min_rmse), n_trials=100)
-        print('best param : ', opt.best_params, 'best rmse : ', opt.best_value)
+                min_rmse = rmse
+                submit_csv.to_csv(path_save_min + date + str(round(rmse, 5)) + '.csv')
+    return rmse
+opt = optuna.create_study(direction='minimize')
+opt.optimize(lambda trial: objective(trial, x, y, test_csv), n_trials=100)
+print('best param : ', opt.best_params, 'best rmse : ', opt.best_value)
         
         # for (n, v) in regressor: 
         #     try:
