@@ -14,13 +14,13 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
+from pycaret.regression import *
 import optuna
 import datetime
 import warnings
 warnings.filterwarnings('ignore')
 
 scaler_list = [MinMaxScaler(), MaxAbsScaler(), StandardScaler(), RobustScaler()]
-model_list = [RandomForestRegressor(), DecisionTreeRegressor()]
 
 def RMSE(x, y):
     return np.sqrt(mean_squared_error(x, y))
@@ -43,43 +43,45 @@ test_csv['Height(Feet)'] = 12*test_csv['Height(Feet)']+test_csv['Height(Remainde
 test_csv['Height(Remainder_Inches)'] = 703*test_csv['Weight(lb)']/test_csv['Height(Feet)']**2
 
 le = LabelEncoder()
-x['Gender'] = le.fit_transform(x['Gender'])
+train_csv['Gender'] = le.fit_transform(train_csv['Gender'])
 test_csv['Gender'] = le.transform(test_csv['Gender'])
 
 min_rmse = 1
 
+pipe = setup(data=train_csv, target='Calories_Burned', train_size=0.8, fold=8)
 
-for k in range(1000000):
-    x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.75, shuffle=True, random_state=k)
+# for k in range(1000000):
+#     x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.75, shuffle=True, random_state=k)
 
-    scaler = MaxAbsScaler()
-    x_train = scaler.fit_transform(x_train)
-    x_test = scaler.transform(x_test)
-    test_csv = scaler.transform(test_csv)
-    def objective(trial, x_train, y_train, x_test, y_test):
-        alpha = trial.suggest_loguniform('alpha', 0.0001, 1)
-        n_restarts_optimizer  = trial.suggest_int('n_restarts_optimizer', 3, 10)
-        optimizer = trial.suggest_categorical('optimizer', ['fmin_l_bfgs_b', 'Powell', 'CG'])
+#     scaler = MaxAbsScaler()
+#     x_train = scaler.fit_transform(x_train)
+#     x_test = scaler.transform(x_test)
+#     test_csv = scaler.transform(test_csv)
+#     def objective(trial, x_train, y_train, x_test, y_test):
+#         alpha = trial.suggest_loguniform('alpha', 0.0001, 1)
+#         n_restarts_optimizer  = trial.suggest_int('n_restarts_optimizer', 3, 10)
+#         optimizer = trial.suggest_categorical('optimizer', ['fmin_l_bfgs_b', 'Powell', 'CG'])
 
-        model = GaussianProcessRegressor(
-            alpha=alpha,
-            n_restarts_optimizer=n_restarts_optimizer,
-            optimizer=optimizer,
-        )
+
+#         model = GaussianProcessRegressor(
+#             alpha=alpha,
+#             n_restarts_optimizer=n_restarts_optimizer,
+#             optimizer=optimizer,
+#         )
         
-        model.fit(x_train, y_train)
+#         model.fit(x_train, y_train)
         
-        print('GPR result : ', model.score(x_test, y_test))
+#         print('GPR result : ', model.score(x_test, y_test))
         
-        y_pred = model.predict(x_test)
-        rmse = RMSE(y_test, y_pred)
-        print('GPR RMSE : ', rmse)
-        if rmse < 0.3:
-            submit_csv['Calories_Burned'] = model.predict(test_csv)
-            date = datetime.datetime.now()
-            date = date.strftime('%m%d_%H%M%S')
-            submit_csv.to_csv(path_save + date + str(round(rmse, 5)) + '.csv')
-        return rmse
-    opt = optuna.create_study(direction='minimize')
-    opt.optimize(lambda trial: objective(trial, x_train, y_train, x_test, y_test), n_trials=20)
-    print('best param : ', opt.best_params, 'best rmse : ', opt.best_value)
+#         y_pred = model.predict(x_test)
+#         rmse = RMSE(y_test, y_pred)
+#         print('GPR RMSE : ', rmse)
+#         if rmse < 0.3:
+#             submit_csv['Calories_Burned'] = model.predict(test_csv)
+#             date = datetime.datetime.now()
+#             date = date.strftime('%m%d_%H%M%S')
+#             submit_csv.to_csv(path_save + date + str(round(rmse, 5)) + '.csv')
+#         return rmse
+#     opt = optuna.create_study(direction='minimize')
+#     opt.optimize(lambda trial: objective(trial, x_train, y_train, x_test, y_test), n_trials=20)
+#     print('best param : ', opt.best_params, 'best rmse : ', opt.best_value)

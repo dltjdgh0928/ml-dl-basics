@@ -79,9 +79,6 @@ for k in range(1000000):
             date = datetime.datetime.now()
             date = date.strftime('%m%d_%H%M%S')
             submit_csv.to_csv(path_save + date + str(round(rmse, 5)) + '.csv')
-            # if rmse < min_rmse:
-            #     min_rmse = rmse
-            #     submit_csv.to_csv(path_save_min + date + str(round(rmse, 5)) + '.csv')
         return rmse
     opt = optuna.create_study(direction='minimize')
     opt.optimize(lambda trial: objective(trial, x_train, y_train, x_test, y_test), n_trials=20)
