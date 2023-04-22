@@ -48,7 +48,7 @@ test_csv['Gender'] = le.transform(test_csv['Gender'])
 
 min_rmse = 1
 
-for k in range(1000):
+for k in range(1000000):
     x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.75, shuffle=True, random_state=k)
 
     for i in scaler_list:
