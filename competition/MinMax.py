@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split, KFold
-from sklearn.preprocessing import MinMaxScaler, LabelEncoder
+from sklearn.preprocessing import MinMaxScaler, LabelEncoder, MaxAbsScaler
 from sklearn.metrics import mean_squared_error
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.preprocessing import PolynomialFeatures
@@ -32,14 +32,14 @@ test_csv['Height(inch)'] = 12*test_csv['Height(Feet)']+test_csv['Height(Remainde
 x['BMI'] = (703*x['Weight(lb)']/x['Height(Feet)']**2)
 test_csv['BMI'] = (703*test_csv['Weight(lb)']/test_csv['Height(Feet)']**2)
 
-# x['BMR'] = 10 * x['Weight(lb)'] * 0.453592 + 6.25 * x['Height(inch)'] * 2.54 - 5 * x['Age'] + x['Gender'].apply(lambda x: 5 if x=='M' else -161)
-# test_csv['BMR'] = 10 * test_csv['Weight(lb)'] * 0.453592 + 6.25 * test_csv['Height(inch)'] * 2.54 - 5 * test_csv['Age'] + test_csv['Gender'].apply(lambda x: 5 if x=='M' else -161)
+x['BMR'] = 10 * x['Weight(lb)'] * 0.453592 + 6.25 * x['Height(inch)'] * 2.54 - 5 * x['Age'] + x['Gender'].apply(lambda x: 5 if x=='M' else -161)
+test_csv['BMR'] = 10 * test_csv['Weight(lb)'] * 0.453592 + 6.25 * test_csv['Height(inch)'] * 2.54 - 5 * test_csv['Age'] + test_csv['Gender'].apply(lambda x: 5 if x=='M' else -161)
 
-# x['Exercise_Intensity'] = x['BPM'] / (220 - x['Age'])
-# test_csv['Exercise_Intensity'] = test_csv['BPM'] / (220 - test_csv['Age'])
+x['Exercise_Intensity'] = x['BPM'] / (220 - x['Age'])
+test_csv['Exercise_Intensity'] = test_csv['BPM'] / (220 - test_csv['Age'])
 
-# x['Calories_Proxy_MET'] = x['Exercise_Intensity'] / 100 * x['Weight(lb)'] * 0.453592 * x['Exercise_Duration']
-# test_csv['Calories_Proxy_MET'] = test_csv['Exercise_Intensity'] / 100 * test_csv['Weight(lb)'] * 0.453592 * test_csv['Exercise_Duration']
+x['Calories_Proxy_MET'] = x['Exercise_Intensity'] / 100 * x['Weight(lb)'] * 0.453592 * x['Exercise_Duration']
+test_csv['Calories_Proxy_MET'] = test_csv['Exercise_Intensity'] / 100 * test_csv['Weight(lb)'] * 0.453592 * test_csv['Exercise_Duration']
 
 # def process_activity_factor(x):
 #     if x < 0.4: return 'Sedentary'
@@ -66,7 +66,7 @@ test_csv['Gender'] = le.transform(test_csv['Gender'])
 x = x.drop(['Height(Feet)', 'Height(Remainder_Inches)'], axis=1)
 test_csv = test_csv.drop(['Height(Feet)', 'Height(Remainder_Inches)'], axis=1)
 
-scaler = MinMaxScaler()
+scaler = MaxAbsScaler()
 x = pd.DataFrame(scaler.fit_transform(x))
 test_csv = pd.DataFrame(scaler.transform(test_csv))
 
@@ -93,10 +93,10 @@ for i in range(10000):
             
             print('GPR result : ', model.score(x_test, y_test))
             
-            y_pred = model.predict(x_test)
+            y_pred = np.round(model.predict(x_test))
             rmse = RMSE(y_test, y_pred)
             print('GPR RMSE : ', rmse)
-            if rmse < 0.3:
+            if rmse < 0.2:
                 submit_csv['Calories_Burned'] = np.round(model.predict(test_csv))
                 date = datetime.datetime.now()
                 date = date.strftime('%m%d_%H%M%S')
