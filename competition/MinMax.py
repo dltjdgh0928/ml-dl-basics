@@ -32,14 +32,14 @@ test_csv['Height(inch)'] = 12*test_csv['Height(Feet)']+test_csv['Height(Remainde
 x['BMI'] = (703*x['Weight(lb)']/x['Height(Feet)']**2)
 test_csv['BMI'] = (703*test_csv['Weight(lb)']/test_csv['Height(Feet)']**2)
 
-x['BMR'] = 10 * x['Weight(lb)'] * 0.453592 + 6.25 * x['Height(inch)'] * 2.54 - 5 * x['Age'] + x['Gender'].apply(lambda x: 5 if x=='M' else -161)
-test_csv['BMR'] = 10 * test_csv['Weight(lb)'] * 0.453592 + 6.25 * test_csv['Height(inch)'] * 2.54 - 5 * test_csv['Age'] + test_csv['Gender'].apply(lambda x: 5 if x=='M' else -161)
+# x['BMR'] = 10 * x['Weight(lb)'] * 0.453592 + 6.25 * x['Height(inch)'] * 2.54 - 5 * x['Age'] + x['Gender'].apply(lambda x: 5 if x=='M' else -161)
+# test_csv['BMR'] = 10 * test_csv['Weight(lb)'] * 0.453592 + 6.25 * test_csv['Height(inch)'] * 2.54 - 5 * test_csv['Age'] + test_csv['Gender'].apply(lambda x: 5 if x=='M' else -161)
 
-x['Exercise_Intensity'] = x['BPM'] / (220 - x['Age'])
-test_csv['Exercise_Intensity'] = test_csv['BPM'] / (220 - test_csv['Age'])
+# x['Exercise_Intensity'] = x['BPM'] / (220 - x['Age'])
+# test_csv['Exercise_Intensity'] = test_csv['BPM'] / (220 - test_csv['Age'])
 
-x['Calories_Proxy_MET'] = x['Exercise_Intensity'] / 100 * x['Weight(lb)'] * 0.453592 * x['Exercise_Duration']
-test_csv['Calories_Proxy_MET'] = test_csv['Exercise_Intensity'] / 100 * test_csv['Weight(lb)'] * 0.453592 * test_csv['Exercise_Duration']
+# x['Calories_Proxy_MET'] = x['Exercise_Intensity'] / 100 * x['Weight(lb)'] * 0.453592 * x['Exercise_Duration']
+# test_csv['Calories_Proxy_MET'] = test_csv['Exercise_Intensity'] / 100 * test_csv['Weight(lb)'] * 0.453592 * test_csv['Exercise_Duration']
 
 # def process_activity_factor(x):
 #     if x < 0.4: return 'Sedentary'
@@ -97,7 +97,7 @@ for i in range(10000):
             rmse = RMSE(y_test, y_pred)
             print('GPR RMSE : ', rmse)
             if rmse < 0.2:
-                submit_csv['Calories_Burned'] = np.round(model.predict(test_csv))
+                submit_csv['Calories_Burned'] = model.predict(test_csv)
                 date = datetime.datetime.now()
                 date = date.strftime('%m%d_%H%M%S')
                 submit_csv.to_csv(path_save + date + str(round(rmse, 5)) + '.csv')
