@@ -9,13 +9,11 @@ from sklearn.metrics import accuracy_score, r2_score
 import pandas as pd
 import numpy as np
 
-def runmodel(a, b, c, d, e, f):
+def RunModel(a, b, c, d, e, f):
     model.fit(a, c)
     g = model.score(b, d)
     print(f, type(e).__name__, 'result : ', g)
-    # h = model.predict(b)
-    # print(f, type(e).__name__, 'score : ', model.score(b, h))
-
+    
 data_list = [load_iris, load_breast_cancer, load_wine, load_digits, fetch_california_housing, load_diabetes]
 classifier_model_list = [RandomForestClassifier, DecisionTreeClassifier, GradientBoostingClassifier, XGBClassifier]
 regressor_model_list = [RandomForestRegressor(), DecisionTreeRegressor(), GradientBoostingRegressor(), XGBRegressor()]
@@ -31,7 +29,8 @@ for i in range(len(data_list)):
     if i<4:
         for j in range(len(classifier_model_list)):
             model = classifier_model_list[j]()
-            runmodel(x_train, x_test, y_train, y_test, model, data_list[i].__name__)
+            RunModel(x_train, x_test, y_train, y_test, model, data_list[i].__name__)
+            # print(data_list[i].__name__, type(model).__name__, 'acc : ', accuracy_score(y_test, model.predict(x_test)))
             fi = model.feature_importances_
             x_fi_train, x_fi_test = x_train, x_test
             index_k = []
@@ -39,12 +38,15 @@ for i in range(len(data_list)):
                 if fi[k]<np.percentile(fi, 25):
                     index_k.append(k)
             x_fi_train, x_fi_test = pd.DataFrame(x_fi_train).drop(index_k, axis=1), pd.DataFrame(x_fi_test).drop(index_k, axis=1)
-            runmodel(x_fi_train, x_fi_test, y_train, y_test, model, data_list[i].__name__)
-            
+            RunModel(x_fi_train, x_fi_test, y_train, y_test, model, data_list[i].__name__)
+            # print(data_list[i].__name__, type(model).__name__, 'acc : ', accuracy_score(y_test, model.predict(x_test)))
+
     if 4<=i:
         for j in range(len(regressor_model_list)):
             model = regressor_model_list[j]
-            runmodel(x_train, x_test ,y_train, y_test, model, data_list[i].__name__)
+            RunModel(x_train, x_test ,y_train, y_test, model, data_list[i].__name__)
+            # print(data_list[i].__name__, type(model).__name__, 'r2 : ', r2_score(y_test, model.predict(x_test)))
+            
             fi = model.feature_importances_
             x_fi_train, x_fi_test = x_train, x_test
             index_k = []
@@ -52,4 +54,6 @@ for i in range(len(data_list)):
                 if fi[k]<np.percentile(fi,25):
                     index_k.append(k)
             x_fi_train, x_fi_test = pd.DataFrame(x_fi_train).drop(index_k, axis=1), pd.DataFrame(x_fi_test).drop(index_k, axis=1)
-            runmodel(x_fi_train, x_fi_test, y_train, y_test, model, data_list[i].__name__)
+            RunModel(x_fi_train, x_fi_test, y_train, y_test, model, data_list[i].__name__)
+            # print(data_list[i].__name__, type(model).__name__, 'r2 : ', r2_score(y_test, model.predict(x_test)))
+            
