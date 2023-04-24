@@ -16,12 +16,12 @@ def fit(x, y):
 datasets = load_breast_cancer()
 x=datasets['data']
 y=datasets.target
-
+print(x.shape)
 result = fit(x,y)
 print('result : ', result)
 
-for i in range(10):
-    pca = PCA(n_components=10-i)
-    x = pca.fit_transform(x)
-    current_result = fit(x, y)
+for i in range(x.shape[1]):
+    pca = PCA(n_components=x.shape[1]-i)
+    x_p = pca.fit_transform(x)
+    current_result = fit(x_p, y)
     print(f'reduce {i} dimensions result : ', current_result)
