@@ -14,7 +14,7 @@ def runmodel(x_train,x_test,y_train,y_test,model:GradientBoostingClassifier,data
     fi_result = model.score(x_test, y_test)
     print(data_name, type(model).__name__, 'fi result : ', fi_result)
     y_fi_pred = model.predict(x_test)
-    print(data_name, type(model).__name__, 'fi acc : ', accuracy_score(y_test, y_fi_pred))
+    print(data_name, type(model).__name__, 'fi acc : ', model.score(y_test, y_fi_pred))
 
 data_list = [load_iris, load_breast_cancer, load_wine, load_digits, fetch_california_housing, load_diabetes]
 classifier_model_list = [RandomForestClassifier, DecisionTreeClassifier, GradientBoostingClassifier, XGBClassifier]
