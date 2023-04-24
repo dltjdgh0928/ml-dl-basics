@@ -30,7 +30,7 @@ for i in range(len(data_list)):
         for j in range(len(classifier_model_list)):
             model = classifier_model_list[j]()
             RunModel(x_train, x_test, y_train, y_test, model, data_list[i].__name__)
-            # print(data_list[i].__name__, type(model).__name__, 'acc : ', accuracy_score(y_test, model.predict(x_test)))
+            print(data_list[i].__name__, type(model).__name__, 'acc : ', accuracy_score(y_test, model.predict(x_test)))
             fi = model.feature_importances_
             x_fi_train, x_fi_test = x_train, x_test
             index_k = []
@@ -39,13 +39,13 @@ for i in range(len(data_list)):
                     index_k.append(k)
             x_fi_train, x_fi_test = pd.DataFrame(x_fi_train).drop(index_k, axis=1), pd.DataFrame(x_fi_test).drop(index_k, axis=1)
             RunModel(x_fi_train, x_fi_test, y_train, y_test, model, data_list[i].__name__)
-            # print(data_list[i].__name__, type(model).__name__, 'acc : ', accuracy_score(y_test, model.predict(x_test)))
+            print(data_list[i].__name__, type(model).__name__, 'acc : ', accuracy_score(y_test, model.predict(x_fi_test)))
 
     if 4<=i:
         for j in range(len(regressor_model_list)):
             model = regressor_model_list[j]
             RunModel(x_train, x_test ,y_train, y_test, model, data_list[i].__name__)
-            # print(data_list[i].__name__, type(model).__name__, 'r2 : ', r2_score(y_test, model.predict(x_test)))
+            print(data_list[i].__name__, type(model).__name__, 'r2 : ', r2_score(y_test, model.predict(x_test)))
             
             fi = model.feature_importances_
             x_fi_train, x_fi_test = x_train, x_test
@@ -55,5 +55,5 @@ for i in range(len(data_list)):
                     index_k.append(k)
             x_fi_train, x_fi_test = pd.DataFrame(x_fi_train).drop(index_k, axis=1), pd.DataFrame(x_fi_test).drop(index_k, axis=1)
             RunModel(x_fi_train, x_fi_test, y_train, y_test, model, data_list[i].__name__)
-            # print(data_list[i].__name__, type(model).__name__, 'r2 : ', r2_score(y_test, model.predict(x_test)))
+            print(data_list[i].__name__, type(model).__name__, 'r2 : ', r2_score(y_test, model.predict(x_fi_test)))
             
