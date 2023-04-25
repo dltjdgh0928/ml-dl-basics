@@ -17,7 +17,7 @@ parameters = [
      'colsample_bylevel':[0.6, 0.7, 0.9]},
 ]
 
-n_c_list = [2, 331, 486, 713]
+n_c_list = [154, 331, 486, 713]
 pca_list = [0.95, 0.99, 0.999, 1.0]
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
