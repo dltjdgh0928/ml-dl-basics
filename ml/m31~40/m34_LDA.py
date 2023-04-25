@@ -22,6 +22,9 @@ def Runmodel(x, y, name, a):
 def LDAmodel(x, y, name, a):
     x_lda = lda.fit_transform(x, y)
     Runmodel(x_lda, y, name, a)
+def Model():
+    Runmodel(x, y, data_list[i], '')
+    LDAmodel(x, y, data_list[i], 'LDA')
 def dacon_diabetes():
     return None
 def dacon_wine():
@@ -48,8 +51,6 @@ model = RandomForestClassifier()
 for i in range(len(data_list)):
     if i<3:
         x, y = data_list[i](return_X_y=True)
-        Runmodel(x, y, data_list[i], '')
-        LDAmodel(x, y, data_list[i], 'LDA')
+        Model()
     else:
-        Runmodel(x, y, data_list[i], '')
-        LDAmodel(x, y, data_list[i], 'LDA')
+        Model()
