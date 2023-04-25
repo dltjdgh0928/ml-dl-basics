@@ -7,9 +7,10 @@ import pandas as pd
 #                     [np.nan, 4, np.nan, 8, np.nan]]).transpose()
 
 data = pd.DataFrame([[2, 2, 2, np.nan], [np.nan, 4, 4, 4], [6, np.nan, 6, np.nan], [8, 8, 8, 8], [10, np.nan, 10, np.nan]])
-
 data.columns = ['x1', 'x2', 'x3', 'x4']
 print(data)
+
+data2 = data.copy()
 # print(data.shape)
 
 #      x1   x2    x3   x4
@@ -55,6 +56,13 @@ data['x1'] = data['x1'].fillna(data['x1'].mean())
 data['x2'] = data['x2'].fillna(data['x2'].median())
 
 # 3. x4 컬럼에 ffill + 777777
-data['x4'] = data['x4'].fillna(data['x4'].ffill())
+data['x4'] = data['x4'].ffill()
 data['x4'] = data['x4'].fillna(777777)
 print(data)
+
+data2['x1'] = data2['x1'].interpolate()
+data2['x2'] = data2['x2'].interpolate()
+data2['x4'] = data2['x4'].interpolate()
+data2['x4'] = data2['x4'].ffill()
+data2['x4'] = data2['x4'].bfill()
+print(data2)
