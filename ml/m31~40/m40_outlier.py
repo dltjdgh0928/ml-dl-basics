@@ -2,11 +2,11 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.experimental import enable_iterative_imputer
-from sklearn.impute import SimpleImputer, KNNImputer, IterativeImputer
-from xgboost import XGBClassifier, XGBRegressor
+from sklearn.impute import IterativeImputer
+from xgboost import XGBRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler
+from sklearn.preprocessing import MinMaxScaler
 import warnings
 warnings.filterwarnings('ignore')
 model = RandomForestRegressor()
@@ -21,7 +21,6 @@ def split_xy(data):
 def outliers(a):
     b = []
     for i in range(a.shape[1]):
-        print(a[:, i])
         q1, q3 = np.percentile(a[:, i], [25, 75], axis=0)
         iqr = q3 - q1
         lower_bound, upper_bound = q1 - (iqr * 1.5), q3 + (iqr * 1.5)
