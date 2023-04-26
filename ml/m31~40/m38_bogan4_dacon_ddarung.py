@@ -19,6 +19,3 @@ model.fit(x_train, y_train)
 
 result = model.score(x_test, y_test)
 print('result : ', result)
-
-y_pred = model.predict(x_test)
-print('r2 : ', r2_score(y_test, y_pred))
