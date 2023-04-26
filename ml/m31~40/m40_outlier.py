@@ -36,18 +36,18 @@ def Runmodel(a, x, y):
     print(a , 'result : ', result)
 
 path_d_ddarung = './_data/ddarung/'
+path_k_bike = './_data/kaggle_bike/'
 path_d_wine = './_data/wine/'
 path_d_diabetes = './_data/dacon_diabetes/'
-path_k_bike = './_data/kaggle_bike/'
 
 ddarung = pd.read_csv(path_d_ddarung + 'train.csv', index_col=0)
 ddarung_x, ddarung_y = split_xy(ddarung)
 
-diabetes = pd.read_csv(path_d_diabetes + 'train.csv', index_col=0)
-diabetes_x, diabetes_y = split_xy(diabetes)
-
 bike = pd.read_csv(path_k_bike + 'train.csv', index_col=0)
 bike_x, bike_y = split_xy(bike)
+
+diabetes = pd.read_csv(path_d_diabetes + 'train.csv', index_col=0)
+diabetes_x, diabetes_y = split_xy(diabetes)
 
 wine = pd.read_csv(path_d_wine + 'train.csv', index_col=0)
 wine['type'] = le.fit_transform(wine['type'])
