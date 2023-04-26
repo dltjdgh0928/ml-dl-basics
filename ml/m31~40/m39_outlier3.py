@@ -6,10 +6,9 @@ def outliers(a):
     b = []
     for i in range(a.shape[1]):
         q1, q2, q3 = np.percentile(a[:, i], [25, 50, 75], axis=0)
-        print(f'q1 :  {q1}\n q2 : {q2}\n q3 : {q3}')
         iqr = q3 - q1
-        print('iqr : ', iqr)
         lower_bound, upper_bound = q1 - (iqr * 1.5), q3 + (iqr * 1.5)
+        print(f'q1 :  {q1}\n q2 : {q2}\n q3 : {q3}\n iqr : {iqr}\n')
         b.append(np.where((a[:,i]>upper_bound)|(a[:,i]<lower_bound)))
     return b
 
