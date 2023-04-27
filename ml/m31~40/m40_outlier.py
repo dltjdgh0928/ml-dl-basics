@@ -29,36 +29,23 @@ def outliers(a):
 def Runmodel(a, x, y):
     x = imputer.fit_transform(x)
     x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=123)
-    x_train = scaler.fit_transform(x_train)
-    x_test = scaler.transform(x_test)
+    x_train, x_test = scaler.fit_transform(x_train), scaler.transform(x_test)
     model.fit(x_train, y_train)
-    result = model.score(x_test, y_test)
-    print(a , 'result : ', result)
+    print(a , 'result : ', model.score(x_test, y_test))
 
-path_d_ddarung = './_data/ddarung/'
-path_k_bike = './_data/kaggle_bike/'
-path_d_wine = './_data/wine/'
-path_d_diabetes = './_data/dacon_diabetes/'
+path_d_ddarung, path_k_bike, path_d_wine, path_d_diabetes = './_data/ddarung/', './_data/kaggle_bike/', './_data/wine/', './_data/dacon_diabetes/'
+ddarung, bike, diabetes, wine = pd.read_csv(path_d_ddarung + 'train.csv', index_col=0), pd.read_csv(path_k_bike + 'train.csv', index_col=0), pd.read_csv(path_d_diabetes + 'train.csv', index_col=0), pd.read_csv(path_d_wine + 'train.csv', index_col=0)
 
-ddarung = pd.read_csv(path_d_ddarung + 'train.csv', index_col=0)
 ddarung_x, ddarung_y = split_xy(ddarung)
-
-bike = pd.read_csv(path_k_bike + 'train.csv', index_col=0)
 bike_x, bike_y = split_xy(bike)
-
-diabetes = pd.read_csv(path_d_diabetes + 'train.csv', index_col=0)
 diabetes_x, diabetes_y = split_xy(diabetes)
 
-wine = pd.read_csv(path_d_wine + 'train.csv', index_col=0)
 wine['type'] = le.fit_transform(wine['type'])
 wine = pd.DataFrame(imputer.fit_transform(wine))
 wine_x = np.array(wine.drop(0, axis=1))
 wine_y = wine[0]
 
-out_ddarung = outliers(ddarung_x)
-out_bike = outliers(bike_x)
-out_wine = outliers(wine_x)
-out_diabetes = outliers(diabetes_x)
+out_ddarung, out_bike, out_wine, out_diabetes = outliers(ddarung_x), outliers(bike_x), outliers(wine_x), outliers(diabetes_x)
 
 var_list = [ddarung_x, bike_x, wine_x, diabetes_x, ddarung_y, bike_y, wine_y, diabetes_y]
 out_list = [out_ddarung, out_bike, out_wine, out_diabetes]
