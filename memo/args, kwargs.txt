@@ -1,0 +1,13 @@
+*args
+*(아스테리크 1개)
+tuple 로 출력
+def func(*args):
+	for i in args:
+
+**kwargs
+*(아스테리크 2개)
+dictionary로 출력
+key = value 형태로 입력
+def func(**kwargs):
+	for key, value in kwargs.items():
+		print('{0} {1}'.format(key, value))
