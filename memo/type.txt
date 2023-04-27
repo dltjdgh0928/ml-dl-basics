@@ -1,0 +1,81 @@
+data = 
+1. pandas -> numpy
+data.values 
+또는 
+data.to_numpy()
+
+a = pd.DataFrame([[1,2], [3,4]])
+print(a)
+print(a.values)
+print(a.to_numpy())
+
+   0  1
+0  1  2
+1  3  4
+[[1 2]
+ [3 4]]
+[[1 2]
+ [3 4]]
+
+2. numpy -> pandas
+pd.DataFrame(data)
+
+b = np.array([[1,2], [3,4]])
+print(b)
+print(pd.DataFrame(b))
+
+[[1 2]
+ [3 4]]
+   0  1
+0  1  2
+1  3  4
+
+3. list -> numpy
+np.array(data)
+
+c = [[1,2], [3,4]]
+print(c)
+print(np.array(c))
+
+[[1, 2], [3, 4]]
+[[1 2]
+ [3 4]]
+
+* numpy -> list
+data.tolist()
+
+b = np.array([[1,2], [3,4]])
+print(b)
+print(b.tolist())
+
+[[1 2]
+ [3 4]]
+[[1, 2], [3, 4]]
+
+4. list -> pandas
+pd.DataFrame(data)
+
+c = [[1,2], [3,4]]
+print(c)
+print(pd.DataFrame(c))
+
+[[1, 2], [3, 4]]
+   0  1
+0  1  2
+1  3  4
+
+*pandas -> list
+data.values.tolist()
+or 
+data.to_numpy().tolist()
+
+a = pd.DataFrame([[1,2], [3,4]])
+print(a)
+print(a.to_numpy().tolist())
+print(a.values.tolist())
+
+   0  1
+0  1  2
+1  3  4
+[[1, 2], [3, 4]]
+[[1, 2], [3, 4]]
