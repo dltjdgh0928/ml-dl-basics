@@ -5,10 +5,10 @@ from haversine import haversine
 from xgboost import XGBRegressor
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 
 imputer = IterativeImputer(XGBRegressor())
-le = LabelEncoder()
+le = OrdinalEncoder()
 
 path='./_data/pm2.5/'
 path_list=os.listdir(path)
@@ -63,70 +63,86 @@ result = np.array(result)
 
 
 
-import os
-import pandas as pd
-import numpy as np
+train_pm_path = './_data/pm2.5/TRAIN/'
+train_aws_path = './_data/pm2.5/TRAIN_AWS/'
+test_pm_path = './_data/pm2.5/TEST_INPUT/'
+test_aws_path = './_data/pm2.5/TEST_AWS/'
 
-# csv 파일이 들어있는 폴더 경로
-folder_path = "/path/to/folder/"
+def bring(path):
+    file_list = os.listdir(path)
+    data_list = []
+    for file_name in file_list:
+        if file_name.endswith(".csv"):
+            file_path = os.path.join(path, file_name)
+            data = pd.read_csv(file_path).values
+            data_list.append(data)
+    data_array = np.array(data_list)
+    return data_array
 
-# csv 파일 목록 불러오기
-file_list = os.listdir(folder_path)
+train_pm = bring(train_pm_path)
+train_aws = bring(train_aws_path)
+test_pm = bring(test_pm_path)
+test_aws = bring(test_aws_path)
 
-# 각 파일을 읽어와서 2D NumPy 배열로 변환한 후 리스트에 추가
-data_list = []
-for file_name in file_list:
-    if file_name.endswith(".csv"):
-        file_path = os.path.join(folder_path, file_name)
-        data = pd.read_csv(file_path).values
-        data_list.append(data)
+print(train_pm[0, :, 3])
+print(train_pm[0, :, 3].shape)
 
-# 3D NumPy 배열로 합치기
-data_array = np.array(data_list)
-
-print(data_array.shape)
-
-
-# path_train_pm = './_data/pm2.5/TRAIN/'
-# path_train_aws = './_data/pm2.5/TRAIN_AWS/'
-
-# train_아름동_pm = pd.DataFrame(imputer.fit_transform(pd.read_csv(path_train_pm + '아름동.csv', index_col=0).drop(['일시', '측정소'], axis=1)))
-# print(train_아름동_pm.shape)
-
-# train_세종고운_aws = pd.DataFrame(imputer.fit_transform(pd.read_csv(path_train_aws + '세종고운.csv', index_col=0).drop(['일시', '지점'], axis=1)))
-# train_세종금남_aws = pd.DataFrame(imputer.fit_transform(pd.read_csv(path_train_aws + '세종금남.csv', index_col=0).drop(['일시', '지점'], axis=1)))
-# train_세종연서_aws = pd.DataFrame(imputer.fit_transform(pd.read_csv(path_train_aws + '세종연서.csv', index_col=0).drop(['일시', '지점'], axis=1)))
-# print(train_세종연서_aws.shape)
-# print(train_세종연서_aws.isna().sum())
+print(imputer.fit_transform(train_pm[i, :, 3].reshape(-1, 1)))
+print(imputer.fit_transform(train_pm[i, :, 3].reshape(-1, 1)).shape)
 
 
+for i in range(train_pm.shape[0]):
+    train_pm[i, :, 3] = imputer.fit_transform(train_pm[i, :, 3].reshape(-1, 1)).reshape(-1,)
+print(pd.DataFrame(train_pm.reshape(-1,4)).isna().sum())
+
+for j in range(train_aws.shape[2]-3):
+    for i in range(train_aws.shape[0]):
+        train_aws[i, :, j+3] = imputer.fit_transform(train_aws[i, :, j+3].reshape(-1, 1)).reshape(-1,)
+
+print(pd.DataFrame(train_aws.reshape(-1,8)).isna().sum())
 
 
-# def bring(path):
-#     data_list = []
-#     for filename in os.listdir(path):
-#         if filename.endswith('.csv'):
-#             with open(os.path.join(path, filename), 'r') as f:
-#                 data=f.read()
-#                 data_list.append(data)
-#                 rows = data.split('\n')  # 개행문자('\n')를 기준으로 문자열을 분리하여 리스트로 만듦
-#                 # print(rows)
-#                 rows = [row.split(',') for row in rows]  # 각 행을 쉼표(,)로 구분하여 분리
-#                 # print(rows)
-#                 # rows.pop()  # 마지막 행은 빈 문자열이므로 제거
-#                 arr = []
-#                 for i in rows:
-#                     arr.append(rows)
-                
-#                 # for row in rows:
-#                 #     values = [float(value) for value in row[3:]]  # 문자열을 실수형으로 변환하여 추출
-#                 #     arr.append(values)  # 값을 리스트에 추가
-#                 # arr = np.array(arr)  # 리스트를 배열로 변환
-#                 # print(arr.shape)  # 출력: (n, 8)
-#     print(len(data_list))
-#     return data_list
+print(train_pm.shape)
+print(train_aws.shape)
+print(test_pm.shape)
+print(test_aws.shape)
+print(pd.DataFrame(test_aws[0]).isna().sum())
 
-# train_aws = './_data/pm2.5/TRAIN_AWS/'
-# train_aws = bring(train_aws)
-# print(train_aws)
+train_pm[:, :, 3] = imputer.fit_transform(train_pm[:, :, 3])
+print(train_pm[:, :, 3])
+print(pd.DataFrame(train_pm[:, :, 3]).isna().sum())
+train_pm = train_pm.reshape(-1, 4)[:, 2:]
+test_pm = test_pm.reshape(-1, 4)[:, 2:]
+train_aws = train_aws.reshape(-1, 8)[:, 2:]
+test_aws = test_aws.reshape(-1, 8)[:, 2:]
 
+def label(x):
+    label_dict = {}
+    labels = []
+    for i in x:
+        if i not in label_dict:
+            label_dict[i] = len(label_dict)
+        labels.append(label_dict[i])
+    return labels
+
+train_pm[:, 0] = label(train_pm[:, 0])
+test_pm[:, 0] = label(test_pm[:, 0])
+train_aws[:, 0] = label(train_aws[:, 0])
+test_aws[:, 0] = label(test_aws[:, 0])
+
+# pd.DataFrame(train_pm).to_csv('./_save/pm2.5/' + 'check4.csv')
+print(train_pm.shape)
+print(train_aws.shape)
+print(test_pm.shape)
+print(test_aws.shape)
+print(pd.DataFrame(train_pm).isna().sum())
+print(pd.DataFrame(train_aws).isna().sum())
+print(pd.DataFrame(test_pm).isna().sum())
+print(pd.DataFrame(test_aws).isna().sum())
+
+
+train_pm = imputer.fit_transform(train_pm)
+train_aws = imputer.fit_transform(train_aws)
+
+print(pd.DataFrame(train_pm).isna().sum())
+print(pd.DataFrame(train_aws).isna().sum())
