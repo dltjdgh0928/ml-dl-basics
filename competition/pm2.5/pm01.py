@@ -50,7 +50,7 @@ train_aws = bring(train_aws_path)
 test_pm = bring(test_pm_path)
 test_aws = bring(test_aws_path)
 
-print(train_pm.shape)
+# print(train_pm.shape)
 
 for i in range(train_pm.shape[0]):
     train_pm[i, :, 3] = imputer.fit_transform(train_pm[i, :, 3].reshape(-1, 1)).reshape(-1,)
@@ -66,7 +66,7 @@ test_pm =  test_pm.reshape(-1, 4)[:, 2:]
 train_aws =  train_aws.reshape(-1, 8)[:, 2:]
 test_aws =  test_aws.reshape(30, -1, 8)[:, :, 2:]
 
-print(train_pm.shape)
+# print(train_pm.shape)
 
 def label(x):
     label_dict = {}
@@ -92,22 +92,22 @@ test_aws = test_aws.reshape(-1, 6)
 test_aws[:, 0] = label(test_aws[:, 0])
 test_aws = test_aws.reshape(30, -1, 6)
 
-print(train_pm.shape)
-print(train_aws.shape)
-print(test_pm.shape)
-print(test_aws.shape)
+# print(train_pm.shape)
+# print(train_aws.shape)
+# print(test_pm.shape)
+# print(test_aws.shape)
 
 
 
 
 
-train_aws = train_aws.astype(float)
+# train_aws = train_aws.astype(np.float32)
 
 train_pm_aws=[]
 for i in range(train_pm.shape[0]):
     train_pm_aws.append(train_aws[min_i[i, 0], :, 1:]*result[0, 0] + train_aws[min_i[i, 1], :, 1:]*result[0, 1] + train_aws[min_i[i, 2], :, 1:]*result[0, 2])
 
-print(train_pm_aws)
+# print(train_pm_aws)
 train_pm_aws = np.array(train_pm_aws)
 
 
@@ -135,7 +135,7 @@ def split_x(dt, ts):
 timesteps = 10
 
 x = split_x(train_data, timesteps).reshape(-1, timesteps, train_data.shape[2])
-print(x)
+# print(x)
 print(x.shape)
 
 y = []
@@ -143,19 +143,39 @@ for i in range(train_data.shape[0]):
     y.append(train_data[i, timesteps:, 1].reshape(train_data.shape[1]-timesteps,))
 
 y = np.array(y).reshape(-1,)
-print(y)
+# print(y)
 print(y.shape)
 
-x_train, y_train, x_test, y_test = train_test_split(x, y, train_size=0.7, random_state=123, shuffle=True)
-# scaler = MinMaxScaler()
-# x_train, x_test = scaler.fit_transform(x_train), scaler.transform(x_test)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random_state=123, shuffle=True)
+
+
+scaler = MinMaxScaler()
+print(x_train.shape)
+print(x_test.shape)
+
+x_train= x_train.reshape(417142,70)
+x_test= x_test.reshape(178776,70)
+x_train, x_test = scaler.fit_transform(x_train), scaler.transform(x_test)
+
+x_train=x_train.reshape(417142,10,7).astype(np.float32)
+x_test=x_test.reshape(178776,10,7).astype(np.float32)
+y_train=y_train.astype(np.float32)
+y_test=y_test.astype(np.float32)
+
+# train_aws = train_aws.astype(np.float32)
+# train_aws = train_aws.astype(np.float32)
+
+
 
 model = Sequential()
-model.add(LSTM(32, input_shape=(timesteps, train_data.shape[2])))
+model.add(LSTM(32, input_shape=(timesteps, 7)))
 model.add(Dense(16))
 model.add(Dense(1))
 
 model.compile(loss='mae', optimizer='adam')
-model.fit(x_train, y_train, batch_size=128, epochs=100)
+model.fit(x_train, y_train, batch_size=128, epochs=5)
 
-model.evaluate(x_test, y_test)
+result = model.evaluate(x_test, y_test)
+
+print('결과 :', result)
+

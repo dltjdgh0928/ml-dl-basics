@@ -23,8 +23,8 @@ def csv_to_parquet(csv_path, save_name):
     gc.collect()
     print(save_name, 'Done.')
 
-csv_to_parquet('./_data/dacon_air/train.csv', 'train')
-csv_to_parquet('./_data/dacon_air/test.csv', 'test')
+csv_to_parquet('d:/study_data/dacon_air/train.csv', 'train')
+csv_to_parquet('d:/study_data/dacon_air/test.csv', 'test')
 
 train = pd.read_parquet('./train.parquet')
 test = pd.read_parquet('./test.parquet')
@@ -108,7 +108,7 @@ model = XGBClassifier(random_state=423,tree_method='gpu_hist', gpu_id=0, predict
 
 
 param_grid = {'n_estimators' : [10],
-    'learning_rate': [0.0001, 0.00000001],
+    'learning_rate': [1, 2],
     'max_depth': [30],
 }
 
