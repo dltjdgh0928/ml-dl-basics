@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from typing import Tuple
 
 def load_aws_and_pm()->Tuple[pd.DataFrame,pd.DataFrame]:
-    path='./_data/pm2.5/'
+    path='./_data/label_pm2.5/'
     path_list=os.listdir(path)
     print(f'datafolder_list:{path_list}')
 
@@ -34,7 +34,7 @@ def load_distance_of_pm_to_aws(awsmap:pd.DataFrame,pmmap:pd.DataFrame)->pd.DataF
     distance_of_pm_to_aws = pd.DataFrame(np.array(a),index=pmmap['Location'],columns=awsmap['Location'])
     return distance_of_pm_to_aws
 
-def min_dist_from_pm(distance_of_pm_to_aws:pd.DataFrame,pmmap:pd.DataFrame,near:int=3)->Tuple[pd.DataFrame,np.ndarray]:
+def scaled_score(distance_of_pm_to_aws:pd.DataFrame,pmmap:pd.DataFrame,near:int=3)->Tuple[pd.DataFrame,np.ndarray]:
     '''pm으로부터 가까운 상위 near개의 환산점수'''
     min_index_of_dis_to_pm=[]
     min_value_of_dis_to_pm=[]
