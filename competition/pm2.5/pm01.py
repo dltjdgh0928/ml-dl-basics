@@ -65,6 +65,12 @@ test_pm =  test_pm.reshape(-1, 4)[:, 2:]
 train_aws =  train_aws.reshape(-1, 8)[:, 2:]
 test_aws =  test_aws.reshape(30, -1, 8)[:, :, 2:]
 
+
+
+
+
+
+
 def label(x):
     label_dict = {}
     labels = []
@@ -113,7 +119,8 @@ for i in range(test_pm.shape[0]):
     test_pm_aws.append(test_aws[min_i[i, 0], :, 1:]*result[0, 0] + test_aws[min_i[i, 1], :, 1:]*result[0, 1] + test_aws[min_i[i, 2], :, 1:]*result[0, 2])
 
 test_pm_aws = np.array(test_pm_aws)
-test_data = np.concatenate([test_pm, test_pm_aws], axis=2)
+# print(np.array(test_pm_aws).shape)
+
 # print(test_data)
 # print(test_data.shape)
 
@@ -132,7 +139,8 @@ timesteps = 10
 
 # print(pd.DataFrame(test_data.reshape(-1, 7)).isna().sum())
 x = split_x(train_data, timesteps).reshape(-1, timesteps, train_data.shape[2])
-pred_x = split_x(test_data, timesteps).reshape(-1, timesteps, test_data.shape[2])
+# pred_x = split_x(test_data, timesteps).reshape(-1, timesteps, test_data.shape[2])
+
 # print(x)
 # print(pred_x)
 # print(pred_x.shape)
@@ -156,26 +164,27 @@ print('======================')
 print(x_train)
 
 x_test = x_test.reshape(-1, 7)
-pred_x = pred_x.reshape(-1, 7)
+# pred_x = pred_x.reshape(-1, 7)
 
-x_train[:, 1:], x_test[:, 1:], pred_x[:, 1:] = scaler.fit_transform(x_train[:, 1:]), scaler.transform(x_test[:, 1:]), scaler.transform(pred_x[:, 1:])
+x_train[:, 2:], x_test[:, 2:] = scaler.fit_transform(x_train[:, 2:]), scaler.transform(x_test[:, 2:])
 
 x_train=x_train.reshape(-1, timesteps, 7).astype(np.float32)
 x_test=x_test.reshape(-1, timesteps, 7).astype(np.float32)
-pred_x = pred_x.reshape(-1, timesteps, 7).astype(np.float32)
+# pred_x = pred_x.reshape(-1, timesteps, 7).astype(np.float32)
 y_train=y_train.astype(np.float32)
 y_test=y_test.astype(np.float32)
 
 print(x_train)
 print(x_train.shape)
 
-print(pred_x)
-print(pred_x.shape)
-print(np.unique(pred_x[:, :, 0], return_counts=True))
-print(pred_x.shape)
+# print(pred_x)
+# print(pred_x.shape)
+# print(np.unique(pred_x[:, :, 0], return_counts=True))
+# print(pred_x.shape)
 
-
-
+print(test_pm)
+print(test_pm.shape)
+print(test_pm_aws.shape)
 model = Sequential()
 model.add(LSTM(32, input_shape=(timesteps, 7)))
 model.add(Dense(16))
@@ -188,5 +197,5 @@ result = model.evaluate(x_test, y_test)
 print('result :', result)
 
 
-
-pred = model.predict(pred_x[])
+pred_x = np.concatenate([test_pm[7, 39:49, :], test_pm_aws[7, 39:49, :]], axis=2).reshape(1, 10 ,7)
+pred = model.predict(pred_x)
