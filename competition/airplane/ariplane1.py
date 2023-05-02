@@ -14,7 +14,7 @@ def seed_everything(seed):
     os.environ['PYTHONHASHSEED'] = str(seed)
     np.random.seed(seed)
 
-seed_everything(12341234) # Fixed Seed
+seed_everything(4124) # Fixed Seed
 
 def csv_to_parquet(csv_path, save_name):
     df = pd.read_csv(csv_path)
@@ -23,12 +23,12 @@ def csv_to_parquet(csv_path, save_name):
     gc.collect()
     print(save_name, 'Done.')
 
-csv_to_parquet('d:/study_data/dacon_air/train.csv', 'train')
-csv_to_parquet('d:/study_data/dacon_air/test.csv', 'test')
+csv_to_parquet('d:/study_data/_data/dacon_air/train.csv', 'train')
+csv_to_parquet('d:/study_data/_data/dacon_air/test.csv', 'test')
 
 train = pd.read_parquet('./train.parquet')
 test = pd.read_parquet('./test.parquet')
-sample_submission = pd.read_csv('./_data/dacon_air/sample_submission.csv', index_col = 0)
+sample_submission = pd.read_csv('d:/study_data/_data/dacon_air/sample_submission.csv', index_col = 0)
 
 # Replace variables with missing values except for the label (Delay) with the most frequent values of the training data
 # 컬럼의 누락된 값은 훈련 데이터에서 해당 컬럼의 최빈값으로 대체됩니다.
@@ -90,7 +90,7 @@ test_x = scaler.transform(test_x)
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=124)
 
 # Model and hyperparameter tuning using GridSearchCV
-model = XGBClassifier(random_state=423,tree_method='gpu_hist', gpu_id=0, predictor = 'gpu_predictor')
+model = XGBClassifier(random_state=123,tree_method='gpu_hist', gpu_id=0, predictor = 'gpu_predictor')
 
 
 # 'n_estimators' : [100, 200, 300, 400, 500, 1000] 디폴트 100 / 1~inf / 정수
@@ -108,7 +108,7 @@ model = XGBClassifier(random_state=423,tree_method='gpu_hist', gpu_id=0, predict
 
 
 param_grid = {'n_estimators' : [10],
-    'learning_rate': [1, 2],
+    'learning_rate': [0.040005, 0.0039],
     'max_depth': [30],
 }
 
@@ -140,6 +140,6 @@ print(f'Recall: {recall}')
 y_pred = best_model.predict_proba(test_x)
 y_pred = np.round(y_pred, 4)
 submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
-submission.to_csv('./_data/dacon_air/submit.csv', index=True)
+submission.to_csv('d:/study_data/_data/dacon_air/submit.csv', index=True)
 
 print(best_model)

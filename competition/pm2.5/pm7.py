@@ -1,35 +1,65 @@
 import os
 import numpy as np
 import pandas as pd
-from haversine import haversine
+import time
 from xgboost import XGBRegressor
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
-from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, MinMaxScaler
-from typing import Tuple
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout, BatchNormalization
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
+from tensorflow.keras.layers import Input,Conv1D
+from tensorflow.keras.models import Model
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from catboost import CatBoostRegressor
+import tensorflow as tf
 
-imputer = IterativeImputer(XGBRegressor())
-le = OrdinalEncoder()
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+    except RuntimeError as e:
+        print(e)        
+
+imputer = IterativeImputer(CatBoostRegressor(
+    iterations=3000,
+    # depth=12,
+    # learning_rate=0.001,
+    # l2_leaf_reg=1,
+    # border_count=64,
+    # bagging_temperature=0.8,
+    # random_strength=0.5,
+    task_type='GPU',
+    eval_metric='MAE',
+    verbose=100))
 
 from preprocess import load_aws_and_pm
-awsmap,pmmap=load_aws_and_pm()
+awsmap, pmmap = load_aws_and_pm()
+
+label = LabelEncoder()
+
+awsmap['Location'] = label.fit_transform(awsmap['Location'])
+pmmap['Location'] = label.fit_transform(pmmap['Location'])
+
+awsmap = awsmap.sort_values(by='Location')
+pmmap = pmmap.sort_values(by='Location')
 
 from preprocess import load_distance_of_pm_to_aws
-distance_of_pm_to_aws=load_distance_of_pm_to_aws(awsmap,pmmap)
+distance_of_pm_to_aws = load_distance_of_pm_to_aws(awsmap, pmmap)
 
 from preprocess import scaled_score
-result,min_i=scaled_score(distance_of_pm_to_aws,pmmap)
-distance_of_pm_to_aws=distance_of_pm_to_aws.values
-result=result.values
+result, min_i = scaled_score(distance_of_pm_to_aws, pmmap)
+distance_of_pm_to_aws = distance_of_pm_to_aws.values
+result = result.values
 
-train_pm_path = './_data/label_pm2.5/TRAIN/'
-train_aws_path = './_data/label_pm2.5/TRAIN_AWS/'
-test_pm_path = './_data/label_pm2.5/TEST_INPUT/'
-test_aws_path = './_data/label_pm2.5/TEST_AWS/'
+train_pm_path = './_data/finedust/TRAIN/'
+train_aws_path = './_data/finedust/TRAIN_AWS/'
+test_pm_path = './_data/finedust/TEST_INPUT/'
+test_aws_path = './_data/finedust/TEST_AWS/'
 
 def bring(path:str)->np.ndarray:
     file_list = os.listdir(path)
@@ -66,64 +96,32 @@ train_aws =  train_aws.reshape(-1, 8)[:, 2:]
 test_aws =  test_aws.reshape(30, -1, 8)[:, :, 2:]
 
 
-
-
-
-
-
-def label(x):
-    label_dict = {}
-    labels = []
-    for i in x:
-        if i not in label_dict:
-            label_dict[i] = len(label_dict)
-        labels.append(label_dict[i])
-    return labels
-
 for i in range(test_aws.shape[0]):
     test_aws[i, :, 0] = pd.DataFrame(test_aws[i, :, 0]).ffill().values.reshape(-1,)
 test_aws = test_aws.reshape(-1, 6)
 
-train_pm[:, 0] = label(train_pm[:, 0])
-train_aws[:, 0] = label(train_aws[:, 0])
-test_pm[:, 0] = label(test_pm[:, 0])
-test_aws[:, 0] = label(test_aws[:, 0])
+train_pm[:, 0] = label.fit_transform(train_pm[:, 0])
+train_aws[:, 0] = label.fit_transform(train_aws[:, 0])
+test_pm[:, 0] = label.fit_transform(test_pm[:, 0])
+test_aws[:, 0] = label.fit_transform(test_aws[:, 0])
 
 train_pm = train_pm.reshape(17, -1, 2)
 test_pm = test_pm.reshape(17, -1, 2)
 train_aws = train_aws.reshape(30, -1, 6)
 test_aws = test_aws.reshape(30, -1, 6)
 
-# print(train_aws.shape)
-# print(train_aws)
-
-# print(test_aws.shape)
-# print(train_aws)
-
-
-
-
 train_pm_aws = []
 for i in range(train_pm.shape[0]):
     train_pm_aws.append(train_aws[min_i[i, 0], :, 1:]*result[0, 0] + train_aws[min_i[i, 1], :, 1:]*result[0, 1] + train_aws[min_i[i, 2], :, 1:]*result[0, 2])
 
 train_pm_aws = np.array(train_pm_aws)
-# print(train_pm_aws)
-# print(train_pm_aws.shape)
 train_data = np.concatenate([train_pm, train_pm_aws], axis=2)
-# print(train_data)
-# print(train_data.shape)
 
 test_pm_aws = []
 for i in range(test_pm.shape[0]):
     test_pm_aws.append(test_aws[min_i[i, 0], :, 1:]*result[0, 0] + test_aws[min_i[i, 1], :, 1:]*result[0, 1] + test_aws[min_i[i, 2], :, 1:]*result[0, 2])
 
 test_pm_aws = np.array(test_pm_aws)
-# print(np.array(test_pm_aws).shape)
-
-# print(test_data)
-# print(test_data.shape)
-
 
 def split_x(dt, ts):
     a = []
@@ -137,14 +135,7 @@ def split_x(dt, ts):
 
 timesteps = 10
 
-# print(pd.DataFrame(test_data.reshape(-1, 7)).isna().sum())
 x = split_x(train_data, timesteps).reshape(-1, timesteps, train_data.shape[2])
-# pred_x = split_x(test_data, timesteps).reshape(-1, timesteps, test_data.shape[2])
-
-# print(x)
-# print(pred_x)
-# print(pred_x.shape)
-# print(pd.DataFrame(pred_x).isna().sum())
 
 y = []
 for i in range(train_data.shape[0]):
@@ -152,50 +143,65 @@ for i in range(train_data.shape[0]):
 
 y = np.array(y).reshape(-1,)
 
-print(x)
-print(x.shape)
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random_state=123, shuffle=False)
 scaler = MinMaxScaler()
 
-print(x_train)
-print(np.unique(x_train[:,:,0], return_counts=True))
 x_train = x_train.reshape(-1, 7)
-print('======================')
-print(x_train)
-
 x_test = x_test.reshape(-1, 7)
-# pred_x = pred_x.reshape(-1, 7)
 
 x_train[:, 2:], x_test[:, 2:] = scaler.fit_transform(x_train[:, 2:]), scaler.transform(x_test[:, 2:])
 
 x_train=x_train.reshape(-1, timesteps, 7).astype(np.float32)
 x_test=x_test.reshape(-1, timesteps, 7).astype(np.float32)
-# pred_x = pred_x.reshape(-1, timesteps, 7).astype(np.float32)
 y_train=y_train.astype(np.float32)
 y_test=y_test.astype(np.float32)
 
-print(x_train)
-print(x_train.shape)
+input1 = Input(shape=(timesteps,7))
+lstm1 = LSTM(256, activation='relu', name='lstm1')(input1)
+drop2 = Dropout(0.2)(lstm1)
+dense1 = Dense(128, activation='relu', name='dense1')(drop2)
+dense2 = Dense(64, activation='relu', name='dense2')(dense1)
+dense3 = Dense(32, activation='relu', name='dense3')(dense2)
+dense4 = Dense(16, activation='relu', name='dense4')(dense3)
+output1 = Dense(1, name='output1')(dense4)
 
-# print(pred_x)
-# print(pred_x.shape)
-# print(np.unique(pred_x[:, :, 0], return_counts=True))
-# print(pred_x.shape)
-
-
-model = Sequential()
-model.add(LSTM(32, input_shape=(timesteps, 7)))
-model.add(Dense(16))
-model.add(Dense(1))
+model = Model(inputs=input1, outputs=output1)
 
 model.compile(loss='mae', optimizer='adam')
-model.fit(x_train, y_train, batch_size=128, epochs=5)
 
-result = model.evaluate(x_test, y_test)
-print('result :', result)
+es = EarlyStopping(monitor='val_loss',
+                   restore_best_weights=True,
+                   patience=20
+                   )
+rl = ReduceLROnPlateau(monitor='val_loss',
+                       patience=4,
+                       )
+stt = time.time()
+model.fit(x_train, y_train, batch_size=128, epochs=200,
+          callbacks=[es,rl],
+          validation_split=0.2)
 
-for j in range(63):
-    for i in range(72):
-        pred_x = np.concatenate([test_pm[7, 39+i+120j:49+i+120j, :], test_pm_aws[7, 39+i+120j:49+i+120j, :]], axis=1).reshape(1, 10 ,7)
-        pred = model.predict(pred_x)
-        test_pm[7, 49+i+120j, 1] = pred
+# print(x_train.shape,y_train.shape)
+
+test_pm = np.array(test_pm)
+test_pm_aws = np.array(test_pm_aws)
+# print(pd.DataFrame(test_pm.reshape(-1,2)).isna().sum())
+submission = pd.read_csv('./_data/pm2.5/answer_sample.csv', index_col=0)
+a=np.zeros(submission.shape[0])
+k=0
+for j in range(17):
+    for i in range(test_pm.shape[1]):
+        if np.isnan(test_pm[j, i, 1]):
+            test_pm[j, i, 1] = model.predict(np.concatenate([test_pm[j, i-11:i-1, :], test_pm_aws[j, i-11:i-1, :]], axis=1).reshape(-1,timesteps,7).astype(np.float32))
+            a[k]=test_pm[j, i, 1]
+            k+=1
+        print(f'변환 진행중{j}번 {np.round(100*i/test_pm.shape[1],1)}%')
+# print(pd.DataFrame(test_pm.reshape(test_pm.shape[1],-1)).isna().sum())
+# print(a[:20])
+
+
+submission['PM2.5']=np.round(a,3)
+submission.to_csv('./_data/pm2.5/Aiur_Submit_3.csv')
+ett = time.time()
+print('걸린시간 :', np.round((ett-stt),2),'초')
+model.save("./_save/Airu_Submit.h5")

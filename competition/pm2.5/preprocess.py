@@ -2,26 +2,22 @@ import os
 import numpy as np
 import pandas as pd
 from haversine import haversine
-from xgboost import XGBRegressor
-from sklearn.experimental import enable_iterative_imputer
-from sklearn.impute import IterativeImputer
-from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from typing import Tuple
 
-def load_aws_and_pm()->Tuple[pd.DataFrame,pd.DataFrame]:
+def load_aws_and_pm()->Tuple[pd.DataFrame, pd.DataFrame]:
     path='./_data/label_pm2.5/'
-    path_list=os.listdir(path)
+    path_list = os.listdir(path)
     print(f'datafolder_list:{path_list}')
 
-    meta='/'.join([path,path_list[1]])
+    meta='/'.join([path, path_list[1]])
     meta_list=os.listdir(meta)
 
     print(f'META_list:{meta_list}')
-    awsmap=pd.read_csv('/'.join([meta,meta_list[0]]))
-    awsmap=awsmap.drop(awsmap.columns[-1],axis=1)
-    pmmap=pd.read_csv('/'.join([meta,meta_list[1]]))
-    pmmap=pmmap.drop(pmmap.columns[-1],axis=1)
-    return awsmap,pmmap
+    awsmap = pd.read_csv('/'.join([meta,meta_list[0]]))
+    awsmap = awsmap.drop(awsmap.columns[-1], axis=1)
+    pmmap = pd.read_csv('/'.join([meta,meta_list[1]]))
+    pmmap = pmmap.drop(pmmap.columns[-1], axis=1)
+    return awsmap, pmmap
 
 def load_distance_of_pm_to_aws(awsmap:pd.DataFrame,pmmap:pd.DataFrame)->pd.DataFrame:
     '''pm과 ams관측소 사이의 거리들을 프린트해준다'''
@@ -36,24 +32,24 @@ def load_distance_of_pm_to_aws(awsmap:pd.DataFrame,pmmap:pd.DataFrame)->pd.DataF
 
 def scaled_score(distance_of_pm_to_aws:pd.DataFrame,pmmap:pd.DataFrame,near:int=3)->Tuple[pd.DataFrame,np.ndarray]:
     '''pm으로부터 가까운 상위 near개의 환산점수'''
-    min_index_of_dis_to_pm=[]
-    min_value_of_dis_to_pm=[]
+    min_i=[]
+    min_v=[]
     for i in range(distance_of_pm_to_aws.shape[0]):
-        min_index_of_dis_to_pm.append(np.argsort(distance_of_pm_to_aws.values[i,:])[:near])
-        min_value_of_dis_to_pm.append(distance_of_pm_to_aws.values[i, min_index_of_dis_to_pm[i]])
+        min_i.append(np.argsort(distance_of_pm_to_aws.values[i,:])[:near])
+        min_v.append(distance_of_pm_to_aws.values[i, min_i[i]])
 
-    min_index_of_dis_to_pm = np.array(min_index_of_dis_to_pm)
-    min_value_of_dis_to_pm = pd.DataFrame(np.array(min_value_of_dis_to_pm),index=distance_of_pm_to_aws.index)
+    min_i = np.array(min_i)
+    min_v = pd.DataFrame(np.array(min_v),index=distance_of_pm_to_aws.index)
     
     for i in range(pmmap.shape[0]):
         for j in range(near):
-            min_value_of_dis_to_pm.values[i, j]=min_value_of_dis_to_pm.values[i, j]**2
+            min_v.values[i, j]=min_v.values[i, j]**2
             
-    sum_min_v = np.sum(min_value_of_dis_to_pm, axis=1)
+    sum_min_v = np.sum(min_v, axis=1)
 
     recip=[]
     for i in range(pmmap.shape[0]):
-        recip.append(sum_min_v[i]/min_value_of_dis_to_pm.values[i, :])
+        recip.append(sum_min_v[i]/min_v.values[i, :])
     recip = np.array(recip)
     recip_sum = np.sum(recip, axis=1)
     coef = 1/recip_sum
@@ -62,4 +58,4 @@ def scaled_score(distance_of_pm_to_aws:pd.DataFrame,pmmap:pd.DataFrame,near:int=
     for i in range(pmmap.shape[0]):
         result.append(recip[i, :]*coef[i])
     result = pd.DataFrame(np.array(result),index=distance_of_pm_to_aws.index)
-    return result,min_index_of_dis_to_pm
+    return result, min_i
