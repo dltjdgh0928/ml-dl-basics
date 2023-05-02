@@ -10,7 +10,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, BaggingClassifier, VotingClassifier, RandomForestRegressor
 
 # 1. 데이터
-data_list = [load_breast_cancer, load_iris, load_wine, load_digits, fetch_covtype, fetch_california_housing, load_diabetes]
+data_list = [load_breast_cancer, load_iris, load_wine, load_digits, fetch_california_housing, load_diabetes]
 for i in range(len(data_list)):
     x, y = data_list[i](return_X_y=True)
 
@@ -25,7 +25,7 @@ for i in range(len(data_list)):
     x_test = scaler.transform(x_test)
 
     # 2. 모델
-    if i<4:
+    if i<3:
         model = RandomForestClassifier()
     else:
         model = RandomForestRegressor()
