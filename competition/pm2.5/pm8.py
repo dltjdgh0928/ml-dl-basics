@@ -210,7 +210,6 @@ test_pm_aws = np.array(test_pm_aws)
 # print(pd.DataFrame(test_pm.reshape(-1,2)).isna().sum())
 submission = pd.read_csv('./_data/pm2.5/answer_sample.csv', index_col=0)
 
-
 a=np.zeros(submission.shape[0])
 
 # print(test_pm[0, 204+1-84:204+11-84, :])

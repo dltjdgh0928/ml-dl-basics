@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.datasets import load_breast_cancer, load_iris, load_wine, load_digits, fetch_covtype, fetch_california_housing, load_diabetes
+from sklearn.datasets import load_breast_cancer, load_iris, load_wine, load_digits, fetch_california_housing, load_diabetes
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
