@@ -20,7 +20,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 # model = DecisionTreeClassifier()
 # model = RandomForestClassifier()
-model = BaggingClassifier(DecisionTreeClassifier(), n_estimators=10, n_jobs=-1, random_state=337, bootstrap=T)
+model = BaggingClassifier(DecisionTreeClassifier(), n_estimators=10, n_jobs=-1, random_state=337, bootstrap=True)
 
 model.fit(x_train, y_train)
 
