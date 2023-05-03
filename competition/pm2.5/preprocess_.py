@@ -12,17 +12,6 @@ def bring(filepath:str)->pd.DataFrame:
     data = pd.concat(li, axis=0, ignore_index=True)
     return data
 
-# def bring(path:str)->np.ndarray:
-#     file_list = os.listdir(path)
-#     data_list = []
-#     for file_name in file_list:
-#         if file_name.endswith(".csv"):
-#             file_path = os.path.join(path, file_name)
-#             data = pd.read_csv(file_path).values
-#             data_list.append(data)
-#     data_array = np.array(data_list)
-#     return data_array
-
 def load_aws_and_pm()->Tuple[pd.DataFrame, pd.DataFrame]:
     path='./_data/label_pm2.5/'
     path_list = os.listdir(path)
