@@ -60,22 +60,106 @@ test_aws['지점'] = label.transform(test_aws['지점'].ffill())
 # 1.2 month, hour 열 생성 & 일시 열 제거
 # train_pm['month'] = train_pm['일시'].str[:2].astype('int8')
 # train_pm['hour'] = train_pm['일시'].str[6:8].astype('int8')
-train_pm = train_pm.drop(['연도', '일시'], axis=1)
+# train_pm = train_pm.drop(['연도', '일시'], axis=1)
+# train_pm['hour'] = train_pm['일시'].str[6:8].astype('int8')
+
+train_pm = train_pm.drop(['연도'], axis=1)
 
 # test_pm['month'] = test_pm['일시'].str[:2].astype('int8')
 # test_pm['hour'] = test_pm['일시'].str[6:8].astype('int8')
-test_pm = test_pm.drop(['연도', '일시'], axis=1)
+# test_pm = test_pm.drop(['연도', '일시'], axis=1)
+test_pm = test_pm.drop(['연도'], axis=1)
 
-train_aws = train_aws.drop(['연도', '일시'], axis=1)
+# train_aws = train_aws.drop(['연도', '일시'], axis=1)
+train_aws = train_aws.drop(['연도'], axis=1)
 
-test_aws = test_aws.drop(['연도', '일시'], axis=1)
+# test_aws = test_aws.drop(['연도', '일시'], axis=1)
+test_aws = test_aws.drop(['연도'], axis=1)
+
+print(train_pm)
+print(train_aws)
+print(test_pm)
+print(test_aws)
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# timeSeries = train_pm.loc[:, ['일시', 'PM2.5']]
+# print(timeSeries)
+# timeSeries.index = timeSeries['일시']
+# ts = timeSeries.drop(['일시'], axis=1)
+
+# result = seasonal_decompose(ts['PM2.5'], model='additive')
+
+# import matplotlib.pyplot as plt
+# fig = plt.figure()  
+# fig = result.plot()  
+# fig.set_size_inches(20, 15)
 
 
 
 # 1.3 train_pm/aws, test_aws의 결측치 제거 ( 일단 imputer )
 imputer = IterativeImputer(XGBRegressor())
 
-train_pm['PM2.5'] = imputer.fit_transform(train_pm['PM2.5'].values.reshape(-1 , 1)).reshape(-1,)
+train_pm['PM2.5'] = imputer.fit_transform(train_pm['PM2.5'].values.reshape(-1 , 1)).reshape(-1, )
+
+# # print(train_pm)
+
+# timeSeries = train_pm.loc[:, ['일시', 'PM2.5']]
+# print(timeSeries)
+# timeSeries.index = timeSeries['일시']
+# print(timeSeries)
+# ts = timeSeries.drop(['일시'], axis=1)
+# print(ts)
+# ts = np.array(ts).reshape(17, -1)[0,:]
+# from statsmodels.graphics.tsaplots import plot_acf
+# plot_acf(ts)
+# import matplotlib.pyplot as plt
+# import statsmodels.api as sm
+# f= plt.figure()
+
+
+
+
+
+
+from sklearn.preprocessing import FunctionTransformer
+
+def log_transform(x):
+    return np.log(x + 1)
+
+def preprocessing_label(y_train, y_test):
+    scaler_load = FunctionTransformer(log_transform)
+    y_train_scaled = scaler_load.fit_transform( y_train.values.reshape(-1,1) )
+    y_train_scaled = y_train_scaled.reshape(-1,)
+    y_test_scaled = scaler_load.transform(y_test.values.reshape(-1,1))
+    y_test_scaled = y_test_scaled.reshape(-1,)
+    
+    return y_train_scaled, y_test_scaled , scaler_load
+
+
+from pmdarima.arima import ndiffs
+
+kpss_diffs = ndiffs(y_train_scaled, alpha=0.05, test='kpss', max_d=6)
+adf_diffs = ndiffs(y_train_scaled, alpha=0.05, test='adf', max_d=6)
+n_diffs = max(adf_diffs, kpss_diffs)
+
+print(f"추정된 차수 d = {n_diffs}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 train_aws['기온(°C)'] = imputer.fit_transform(train_aws['기온(°C)'].values.reshape(-1 , 1)).reshape(-1,)
 test_aws['기온(°C)'] = imputer.transform(test_aws['기온(°C)'].values.reshape(-1 , 1)).reshape(-1,)
