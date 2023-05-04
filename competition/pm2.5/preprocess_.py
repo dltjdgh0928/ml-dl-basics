@@ -13,7 +13,7 @@ def bring(filepath:str)->pd.DataFrame:
     return data
 
 def load_aws_and_pm()->Tuple[pd.DataFrame, pd.DataFrame]:
-    path='./_data/label_pm2.5/'
+    path='./_data/finedust/'
     path_list = os.listdir(path)
     print(f'datafolder_list:{path_list}')
 

@@ -1,4 +1,5 @@
 import os
+from typing import Any
 import numpy as np
 import pandas as pd
 import time
@@ -28,13 +29,13 @@ if gpus:
         print(e)        
 
 # 1.0 train, test, answer 데이터 경로 지정 및 가져오기
-path = 'c:/study/_data/finedust/'
+path = './_data/finedust/'
 
 train_pm_path = glob.glob(path + 'TRAIN/*.csv')
 test_pm_path = glob.glob(path + 'TEST_INPUT/*.csv')
 train_aws_path = glob.glob(path + 'TRAIN_AWS/*.csv')
 test_aws_path = glob.glob(path + 'TEST_AWS/*.csv')
-submission = pd.read_csv(path + 'answer_sample.csv', index_col=0)
+submission = pd.read_csv('./_data/finedust/answer_sample.csv', index_col=0)
 
 from preprocess_ import bring
 train_pm = bring(train_pm_path)
@@ -67,6 +68,8 @@ train_aws = train_aws.drop(['연도', '일시'], axis=1)
 
 test_aws = test_aws.drop(['연도', '일시'], axis=1)
 
+
+
 # 1.3 train_pm/aws, test_aws의 결측치 제거 ( 일단 imputer )
 imputer = IterativeImputer(XGBRegressor())
 
@@ -89,28 +92,7 @@ test_aws['습도(%)'] = imputer.transform(test_aws['습도(%)'].values.reshape(-
 
 
 
-# 1.4 PCA 
-# from sklearn.decomposition import PCA
-# pca = PCA(n_components=3)
 
-# train_aws = pca.fit_transform(train_aws)
-# test_aws = pca.transform(test_aws)
-
-
-# 1.4 month, hour 원핫
-train_pm = pd.concat([pd.DataFrame(train_pm), pd.get_dummies(train_pm['month']), pd.get_dummies(train_pm['hour'])], axis=1)
-test_pm = pd.concat([pd.DataFrame(test_pm), pd.get_dummies(test_pm['month']), pd.get_dummies(test_pm['hour'])], axis=1)
-train_pm = train_pm.drop(['month', 'hour'], axis=1)
-test_pm = test_pm.drop(['month', 'hour'], axis=1)
-
-# 1.5 PCA
-# from sklearn.decomposition import PCA
-# pca = PCA(n_components=15)
-# train_pm = pd.concat([train_pm['측정소'], pd.DataFrame(pca.fit_transform(train_pm.values[:, 2:]))], axis=1)
-# test_pm = pd.concat([test_pm['측정소'], pd.DataFrame(pca.fit_transform(test_pm.values[:, 2:]))], axis=1)
-# print(train_pm)
-# print(train_pm.shape)
-# print(type(train_pm))
 
 
 
@@ -161,119 +143,19 @@ result = result.values
 
 # 2.5 pm관측소의 날씨 구하기
 train_pm = train_pm.values.reshape(17, -1, train_pm.shape[1])
-train_aws = np.array(train_aws).reshape(30, -1, train_aws.shape[1])
+train_aws = train_aws.values.reshape(30, -1, train_aws.shape[1])
 test_pm = test_pm.values.reshape(17, -1, test_pm.shape[1])
-test_aws = np.array(test_aws).reshape(30, -1, test_aws.shape[1])
+test_aws = test_aws.values.reshape(30, -1, test_aws.shape[1])
 
 train_pm_aws = []
 for i in range(17):
     train_pm_aws.append(train_aws[min_i[i, 0], :, 1:]*result[0, 0] + train_aws[min_i[i, 1], :, 1:]*result[0, 1] + train_aws[min_i[i, 2], :, 1:]*result[0, 2])
 
+train_data = np.concatenate([train_pm, train_pm_aws], axis=2)
+
 test_pm_aws = []
 for i in range(17):
     test_pm_aws.append(test_aws[min_i[i, 0], :, 1:]*result[0, 0] + test_aws[min_i[i, 1], :, 1:]*result[0, 1] + test_aws[min_i[i, 2], :, 1:]*result[0, 2])
-
-
-
-# 2.6 x 생성
-train_data = np.concatenate([train_pm, train_pm_aws], axis=2)
-
-
-
-# 2.6.1 PCA
-from sklearn.decomposition import PCA
-pca = PCA(n_components=15)
-print(train_data)
-print(train_data.shape)
-train_data = train_data.reshape(-1, train_data.shape[2])
-train_data = pd.concat([pd.DataFrame(train_data[:, :2]), pd.DataFrame(pca.fit_transform(train_data[:, 2:]))], axis=1)
-print(train_data)
-print(train_data.shape)
-
-
-
-# 2.7 역순 데이터 생성
-train_pm_reverse = np.flip(train_pm, axis=1)
-train_pm_aws_reverse = np.flip(train_pm_aws, axis=1)
-test_pm_reverse = np.flip(test_pm, axis=1)
-test_pm_aws_reverse = np.flip(test_pm_aws, axis=1)
-
-train_rev_data = np.concatenate([train_pm_reverse, train_pm_aws_reverse], axis=2)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 3.1 split_x
-timesteps = 10
-
-from preprocess_ import split_x
-x = split_x(train_data, timesteps).reshape(-1, timesteps, train_data.shape[2])
-x_rev = split_x(train_rev_data, timesteps).reshape(-1, timesteps, train_rev_data.shape[2])
-
-
-
-# 3.2 split_y
-y = []
-for i in range(train_data.shape[0]):
-    y.append(train_data[i, timesteps:, 1].reshape(-1,))
-y = np.array(y).reshape(-1,)
-
-y_rev=[]
-for i in range(train_rev_data.shape[0]):
-    y_rev.append(train_rev_data[i, timesteps:, 1].reshape(-1,))
-y_rev = np.array(y_rev).reshape(-1,)
-
-
-
-# 3.3 train_test_split
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, random_state=323, shuffle=True)
-x_rev_train, x_rev_test, y_rev_train, y_rev_test = train_test_split(x_rev, y_rev, train_size=0.8, random_state=323, shuffle=True)
-
-
-
-# 3.4 Scaler
-scaler = MinMaxScaler()
-
-x_train = x_train.reshape(-1, x.shape[2])
-x_test = x_test.reshape(-1, x.shape[2])
-x_rev_train = x_rev_train.reshape(-1, x.shape[2])
-x_rev_test = x_rev_test.reshape(-1, x.shape[2])
-
-x_train[:, 2:], x_test[:, 2:] = scaler.fit_transform(x_train[:, 2:]), scaler.transform(x_test[:, 2:])
-x_rev_train[:, 2:], x_rev_test[:, 2:] = scaler.fit_transform(x_rev_train[:, 2:]), scaler.transform(x_rev_test[:, 2:])
-# 2: 를 하는 이유는 0번째는 지역, 1번째는 PM2.5
-# 지역은 스케일 의미가 없을거같고, PM2.5는 predict해서 나온값을 계속 scale하기 번거로우니까
-
-
-# 3.5.0 데이터 용량 줄이기 ( float 64 -> float 32 )
-x_train=x_train.reshape(-1, timesteps, x.shape[2]).astype(np.float32)
-x_test=x_test.reshape(-1, timesteps, x.shape[2]).astype(np.float32)
-y_train=y_train.astype(np.float32)
-y_test=y_test.astype(np.float32)
-
-
-
-# 3.5.1 역방향 데이터도 적용
-x_rev_train=x_rev_train.reshape(-1, timesteps, x.shape[2]).astype(np.float32)
-x_rev_test=x_rev_test.reshape(-1, timesteps, x.shape[2]).astype(np.float32)
-y_rev_train=y_rev_train.astype(np.float32)
-y_rev_test=y_rev_test.astype(np.float32)
 
 
 
@@ -297,46 +179,6 @@ y_rev_test=y_rev_test.astype(np.float32)
 
 
 
-# 4.1 Model
-input1 = Input(shape=(timesteps, x_train.shape[2]))
-conv1d1 = Conv1D(128,6)(input1)
-drop1 = Dropout(0.2)(conv1d1)
-lstm1 = LSTM(128, activation='relu', name='lstm1')(drop1)
-drop2 = Dropout(0.2)(lstm1)
-dense1 = Dense(128, activation='relu', name='dense1')(drop2)
-dense2 = Dense(64, activation='relu', name='dense2')(dense1)
-dense3 = Dense(32, activation='relu', name='dense3')(dense2)
-dense4 = Dense(16, activation='relu', name='dense4')(dense3)
-output1 = Dense(1, name='output1')(dense4)
-
-model1 = Model(inputs=input1, outputs=output1)
-model2 = Model(inputs=input1, outputs=output1)
-
-
-
-# 4.2 Compile, fit
-model1.compile(loss='mae', optimizer='adam')
-model2.compile(loss='mae', optimizer='adam')
-
-es = EarlyStopping(monitor='val_loss',
-                   restore_best_weights=True,
-                   patience=10
-                   )
-rl = ReduceLROnPlateau(monitor='val_loss',
-                       patience=4,
-                       )
-
-stt = time.time()
-model1.fit(x_train, y_train, batch_size=128, epochs=200,
-          callbacks=[es,rl],
-          validation_split=0.2)
-
-model2.fit(x_rev_train, y_rev_train, batch_size=128, epochs=200,
-          callbacks=[es,rl],
-          validation_split=0.2)
-
-test_pm = np.array(test_pm)
-test_pm_aws = np.array(test_pm_aws)
 
 
 
@@ -347,41 +189,72 @@ test_pm_aws = np.array(test_pm_aws)
 
 
 
+# 3.1 split_x
+timesteps = 10
+
+from preprocess_ import split_x
+x = split_x(train_data, timesteps).reshape(-1, timesteps, train_data.shape[2])
 
 
 
+# 3.2 split_y
+y = []
+for i in range(train_data.shape[0]):
+    y.append(train_data[i, timesteps:, 1].reshape(-1,))
+y = np.array(y).reshape(-1,)
 
 
 
+# 3.3 train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, random_state=323, shuffle=True)
 
 
 
+# 3.4 Scaler
+scaler = MinMaxScaler()
 
-# 5.1 predict
-l=[]
-for j in range(17):
-    for k in range(64):
-        for i in range(120):
-            if np.isnan(test_pm[j, 120*k+i, 1]) and i<84:
-                test_pm[j, 120*k+i, 1] = model1.predict(np.concatenate([test_pm[j, 120*k+i-1-timesteps:120*k+i-1, :], test_pm_aws[j, 120*k+i-1-timesteps:120*k+i-1, :]], axis=1).reshape(-1, timesteps, x_train.shape[2]).astype(np.float32))
-            elif i>=84:
-                test_pm[j, 120*k+204-i-1, 1] = model2.predict(np.flip(np.concatenate([test_pm[j, 120*k+204-i:120*k+204-i+timesteps, :], test_pm_aws[j, 120*k+204-i:120*k+204-i+timesteps, :]], axis=1), axis=0).reshape(-1, timesteps, x_rev_train.shape[2]).astype(np.float32))
-            print(f'model 변환 진행중{j}의 {k}의 {i}번')
-        l.append(test_pm[j, 120*k+48:120*k+120, 1])
+x_train = x_train.reshape(-1, x.shape[2])
+x_test = x_test.reshape(-1, x.shape[2])
 
-l = np.array(l).reshape(-1,)
+x_train[:, 2:], x_test[:, 2:] = scaler.fit_transform(x_train[:, 2:]), scaler.transform(x_test[:, 2:])
+# 2: 를 하는 이유는 0번째는 지역, 1번째는 PM2.5
+# 지역은 스케일 의미가 없을거같고, PM2.5는 predict해서 나온값을 계속 scale하기 번거로우니까
 
 
+# 3.5.0 데이터 용량 줄이기 ( float 64 -> float 32 )
+x_train=x_train.reshape(-1, timesteps, x.shape[2]).astype(np.float32)
+x_test=x_test.reshape(-1, timesteps, x.shape[2]).astype(np.float32)
+y_train=y_train.astype(np.float32)
+y_test=y_test.astype(np.float32)
 
-# 5.2 Save Submit
-submission['PM2.5']=l
-submission.to_csv('./_data/pm2.5/Aiur_Submit_time5.csv')
 
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+import itertools
 
+p = d = q = range(0, 3)
+pdq = list(itertools.product(p, d, q))
+seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product(p, d, q))]
 
-# 5.3 Save Weight
-# submission['PM2.5']= np.round(a, 3)
-ett = time.time()
-print('걸린시간 :', np.round((ett-stt),2),'초')
-model1.save("./_save/Aiur_Submit5.h5")
-model2.save("./_save/Aiur_Submit6.h5")
+best_aic = np.inf
+best_pdq = None
+best_seasonal_pdq = None
+tmp_model = None
+best_mdl = None
+
+for param in pdq:
+    for param_seasonal in seasonal_pdq:
+        try:
+            tmp_mdl = SARIMAX(y_train, exog=None, order=param, seasonal_order=param_seasonal, enforce_stationarity=True, enforce_invertibility=True)
+            res = tmp_mdl.fit()
+            print('sarimax{}x{}12 - aic:{}'.format(param, param_seasonal, res.aic))
+            if res.aic < best_aic:
+                best_aic = res.aic
+                best_pdq = param
+                best_seasonal_pdq = param_seasonal
+                best_mdl = tmp_mdl
+        except:
+            continue
+
+print('best sarimax{}x{}12 model - aic:{}'.format(best_pdq, best_seasonal_pdq, best_aic))
+
