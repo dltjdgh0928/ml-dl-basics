@@ -8,4 +8,3 @@ init = tf.compat.v1.global_variables_initializer()
 sess.run(init)
 
 print(sess.run(x + y))
-
