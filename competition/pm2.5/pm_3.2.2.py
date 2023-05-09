@@ -225,7 +225,7 @@ train_data = np.concatenate([train_pm_onehot, train_pm_aws], axis=2)
 
 test_pm_onehot = []
 for i in range(17):
-    for j in range(test_pm.shape[2]):
+    for j in range(test_pm.shape[1]):
         test_pm_onehot.append(np.concatenate([test_pm[i, j, :], labels[i, :]]))
 
 test_pm_onehot = np.array(test_pm_onehot).reshape(17, -1, test_pm.shape[2]+k)
@@ -373,7 +373,10 @@ print('# 4.1 Done')
 
 
 
-
+print(test_pm_onehot[0, 120*0+48-timesteps:120*0+48, :])
+print(test_pm_onehot[0, 120*0+48-timesteps:120*0+48, :].shape)
+print(test_pm_aws[0, 120*0+48-timesteps:120*0+48, :])
+print(test_pm_aws[0, 120*0+48-timesteps:120*0+48, :].shape)
 
 
 
