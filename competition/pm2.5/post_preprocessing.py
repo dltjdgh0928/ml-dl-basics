@@ -21,8 +21,9 @@ print(pm_best_csv.shape)
 
 for j in range(17):
     for i in range(64):
-        pm_best_csv[j, 0+72*i:60+72*i, 3] = pm_best_csv[j, 0+72*i:60+72*i, 3] - 0.004
-        pm_best_csv[j, 60+72*i:72+72*i, 3] = pm_best_csv[j, 60+72*i:72+72*i, 3] - 0.008
+        pm_best_csv[j, 12+72*i:56+72*i, 3] = pm_best_csv[j, 12+72*i:56+72*i, 3] - 0.004
+        pm_best_csv[j, 56+72*i:68+72*i, 3] = pm_best_csv[j, 56+72*i:68+72*i, 3] - 0.008
+        pm_best_csv[j, 68+72*i:72+72*i, 3] = pm_best_csv[j, 68+72*i:72+72*i, 3] - 0.012
 
 pm = pm_best_csv[:, :, 3].reshape(-1,)
 anwser = pd.read_csv(path + 'answer_sample.csv', index_col=0)
