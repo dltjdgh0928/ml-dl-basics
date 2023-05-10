@@ -23,6 +23,8 @@ import random
 seed = 0 #random state 0넣는 거랑 비슷함.
 random.seed(seed)
 np.random.seed(seed)
+tf.random.set_seed(seed)
+os.environ["PYTHONHASHSEED"] = str(seed)
 
 # 0. gpu 사용여부
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -67,9 +69,14 @@ print('# 1.1 Done')
 # 1.2 hour 열 생성 (주기 함수로) & 연도, 일시 열 제거
 from preprocess_3 import get_hourly_features
 
+train_pm['month'] = train_pm['일시'].str[:2].astype('int8')
+
 train_pm['hour'] = train_pm['일시'].str[6:8].astype('int8')
 train_pm['hour_sin'], train_pm['hour_cos'] = get_hourly_features(train_pm['hour'])
 train_pm = train_pm.drop(['연도', '일시', 'hour'], axis=1)
+
+
+test_pm['month'] = test_pm['일시'].str[:2].astype('int8')
 
 test_pm['hour'] = test_pm['일시'].str[6:8].astype('int8')
 test_pm['hour_sin'], test_pm['hour_cos'] = get_hourly_features(test_pm['hour'])
@@ -98,6 +105,25 @@ train_aws['습도(%)'] = imputer.fit_transform(train_aws['습도(%)'].values.res
 
 print('# 1.3 Done')
 
+print(train_pm)
+print(train_pm.shape)
+
+month = []
+for i in range(12):
+    for j in range(len(train_pm['month'])):
+        if train_pm['month'][j] == i+1:
+            month.append(train_pm['PM2.5'][j])
+month = np.array(month)
+print(month.shape)            
+
+print(f'{i+1}월 평균 : ', np.mean(month), f'{i+1}월의 표준편차 : ', np.std(month))
+
+
+
+
+from sklearn.cluster import KMeans
+
+# month_pm_mean = [np.mean(train_pm[i, :, ])]
 
 
 
@@ -105,6 +131,18 @@ print('# 1.3 Done')
 
 
 
+
+
+pm_loc_means = [np.mean(train_pm[i, :, 0]) for i in range(17)]
+pm_loc_std = [np.std(train_pm[i, :, 0]) for i in range(17)]
+cluster = np.array(list(zip(pm_loc_means, pm_loc_std)))
+
+k_location = 3
+
+kmeans = KMeans(n_clusters=k_location, init='k-means++', max_iter=300, n_init=10, random_state=seed)
+kmeans.fit(cluster)
+centroids = kmeans.cluster_centers_
+labels = kmeans.labels_
 
 
 
@@ -190,13 +228,13 @@ print('# 2.6 Done')
 # 2.7 KMeans로 지역 k 개로 군집화
 from sklearn.cluster import KMeans
 
-pm_means = [np.mean(train_pm[i, :, 0]) for i in range(17)]
-pm_std = [np.std(train_pm[i, :, 0]) for i in range(17)]
-cluster = np.array(list(zip(pm_means, pm_std)))
+pm_loc_means = [np.mean(train_pm[i, :, 0]) for i in range(17)]
+pm_loc_std = [np.std(train_pm[i, :, 0]) for i in range(17)]
+cluster = np.array(list(zip(pm_loc_means, pm_loc_std)))
 
-k = 3
+k_location = 3
 
-kmeans = KMeans(n_clusters=k, init='k-means++', max_iter=300, n_init=10, random_state=seed)
+kmeans = KMeans(n_clusters=k_location, init='k-means++', max_iter=300, n_init=10, random_state=seed)
 kmeans.fit(cluster)
 centroids = kmeans.cluster_centers_
 labels = kmeans.labels_
@@ -220,7 +258,7 @@ for i in range(17):
     for j in range(train_pm.shape[1]):
         train_pm_onehot.append(np.concatenate([train_pm[i, j, :], labels[i, :]]))
         
-train_pm_onehot = np.array(train_pm_onehot).reshape(17, -1, train_pm.shape[2]+k)
+train_pm_onehot = np.array(train_pm_onehot).reshape(17, -1, train_pm.shape[2]+k_location)
 train_data = np.concatenate([train_pm_onehot, train_pm_aws], axis=2)
 
 test_pm_onehot = []
@@ -228,7 +266,7 @@ for i in range(17):
     for j in range(test_pm.shape[1]):
         test_pm_onehot.append(np.concatenate([test_pm[i, j, :], labels[i, :]]))
 
-test_pm_onehot = np.array(test_pm_onehot).reshape(17, -1, test_pm.shape[2]+k)
+test_pm_onehot = np.array(test_pm_onehot).reshape(17, -1, test_pm.shape[2]+k_location)
 
 print('# 2.9 Done')
 
@@ -362,7 +400,7 @@ for i in range(72):
         epochs=50,
         callbacks=[es,rl],
         validation_split=0.2)
-    print(f'{i}번쨰 훈련 완료')
+    print(f'{i}번째 훈련 완료')
 
 print('# 4.1 Done')
 

@@ -43,12 +43,22 @@ with tf.compat.v1.Session() as sess:
     print('y_predict : ', (y_predict[0]))
 
 print(loss_val_list)
-print(loss_val_list)
-print(w_val_list)
+print(w_val_list[0])
 
 
 import matplotlib.pyplot as plt
+plt.subplot(1,3,1)
 plt.plot(loss_val_list)
 plt.xlabel('epochs')
+plt.ylabel('loss')
+
+plt.subplot(1,3,2)
+plt.plot(w_val_list)
+plt.xlabel('epochs')
+plt.ylabel('weight')
+
+plt.subplot(1,3,3)
+plt.scatter(w_val_list, loss_val_list)
+plt.xlabel('weight')
 plt.ylabel('loss')
 plt.show()
