@@ -1090,3 +1090,4 @@ print(y_submit)
 # print(y_submit[y_submit.shape[0]-1])
 
 submission.to_csv(path_save + 'kaggle_house_' + date + '_KNN.csv')
+33
