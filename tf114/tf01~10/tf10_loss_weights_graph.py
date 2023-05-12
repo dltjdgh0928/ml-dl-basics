@@ -10,7 +10,7 @@ hypothesis = x * w
 loss = tf.reduce_mean(tf.square(hypothesis - y))
 
 w_history = []
-loss_histroy = []
+loss_history = []
 
 with tf.compat.v1.Session() as sess:
     for i in range(-30, 50):
@@ -18,12 +18,12 @@ with tf.compat.v1.Session() as sess:
         curr_loss = sess.run(loss, feed_dict={w : curr_w})
         
         w_history.append(curr_w)
-        loss_histroy.append(curr_loss)
+        loss_history.append(curr_loss)
 
 print('w_history : ', w_history)
-print('loss_history : ', loss_histroy)
+print('loss_history : ', loss_history)
 
-plt.plot(w_history, loss_histroy)
+plt.plot(w_history, loss_history)
 plt.xlabel('weights')
 plt.ylabel('loss')
 plt.show()
