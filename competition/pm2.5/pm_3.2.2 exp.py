@@ -19,7 +19,7 @@ import tensorflow as tf
 import glob
 import random
 
-# Set random seed
+# 0. Set random seed
 seed = 0 #random state 0넣는 거랑 비슷함.
 random.seed(seed)
 np.random.seed(seed)
