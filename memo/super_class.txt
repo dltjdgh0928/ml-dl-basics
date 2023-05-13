@@ -1,0 +1,38 @@
+class A(object):
+    def __init__(self):
+        print("A")
+        
+    def hello(self):
+        print("hello")
+
+파이썬의 클래스 간에는 상속이 가능하다.
+
+class B(A):
+    def __init__(self):
+        print("B")
+        
+    def hi(self):
+        print("hi")
+
+이러면 클래스 B는 A를 상속받은 것.
+
+이때 상속받은 대상의 클래스를 호출하는 함수가 super 이다.
+
+class B(A):
+    def __init__(self):
+        super().__init__()
+        print("B")
+        
+    def hi(self):
+        print("hi")
+
+b = B()
+
+출력결과 : 
+
+A
+B
+
+이론적으로 클래스안에 클래스를 계속 넣을 수 있으며, 이를 중첩 클래스
+또는 내부 클래스라고 하는데, 중첩깊이가 너무 깊어지면 RecursionError가 발생하므로
+적당히 사용하자

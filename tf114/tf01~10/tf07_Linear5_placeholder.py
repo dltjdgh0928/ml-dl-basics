@@ -30,3 +30,4 @@ with tf.compat.v1.Session() as sess:
         _, loss_val, w_val, b_val = sess.run([train, loss, w, b], feed_dict={x:[1,2,3,4,5], y:[2,4,6,8,10]})
         if step %20 == 0:
             print(step, loss_val, w_val, b_val)
+
