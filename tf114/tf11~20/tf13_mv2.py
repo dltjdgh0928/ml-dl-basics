@@ -20,4 +20,4 @@ hypothesis = x * w + b
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
 
-print(sess.run(hypothesis, feed_dict={x:x_data, y:y_data}))
+print(sess.run([hypothesis, w, b], feed_dict={x:x_data, y:y_data}))
