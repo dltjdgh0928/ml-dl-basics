@@ -6,20 +6,10 @@ import tensorflow as tf
 import numpy as np
 from sklearn.metrics import accuracy_score
 from keras.utils.np_utils import to_categorical
-# print(keras.__version__)
-tv = tf.compat.v1
+import time
 
-# tf.compat.v1.disable_eager_execution()
-# tf.set_random_seed(337)
-# tf.random.set_seed(337)
-# gpus = tf.config.experimental.list_physical_devices('GPU')
-# if gpus:
-#     try:
-#         for gpu in gpus:
-#             tf.config.experimental.set_memory_growth(gpu, True)
-#         logical_gpus = tf.config.experimental.list_logical_devices('GPU')
-#     except RuntimeError as e:
-#         print(e)        
+
+tv = tf.compat.v1
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
@@ -35,9 +25,7 @@ yp = tv.placeholder('float', shape = [None, output_node])
 
 hidden_node1 = 64
 
-w1 = tv.get_variable('weight1', shape=[x_train.shape[1], hidden_node1])
-# w1 = tv.Variable(tv.random.normal([x_train.shape[1], hidden_node1]), name='weight1')
-
+w1 = tv.Variable(tv.random.normal([x_train.shape[1], hidden_node1]), name='weight1')
 b1 = tv.Variable(tv.zeros(hidden_node1), name='bias1')
 layer1 = tv.matmul(xp, w1) + b1
 dropout1 = tv.nn.dropout(layer1, rate=0.3)
@@ -47,20 +35,30 @@ b2 = tv.Variable(tv.zeros([output_node]), name='bias2')
 hypothesis = tv.matmul(dropout1, w2) + b2
 
 
-# loss = tf.reduce_mean(-tf.reduce_sum(yp*tf.nn.log_softmax(hypothesis), axis=1))
-loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=yp, logits=hypothesis))
+loss = tf.reduce_mean(-tf.reduce_sum(yp*tf.nn.log_softmax(hypothesis), axis=1))
+# loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=yp, logits=hypothesis))
 train = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=0.001).minimize(loss)
-    
-epochs = 10
+
+batch_size = 100
+total_batch = int(x_train.shape[0]/batch_size)      # 60000 / 100 = 600
+epochs = 1000
 
 sess = tv.Session()
 sess.run(tv.global_variables_initializer())
 
+strat_time = time.time()
 for step in range(epochs):
-    _, loss_val = sess.run([train, loss], feed_dict={xp:x_train, yp:y_train})
-    y_pred = sess.run(hypothesis, feed_dict={xp:x_test})
-    print(f'epoch : {step+1}\t\t{(step+1)*100/epochs}% complete\t\tloss : {loss_val}')
-print('acc : ', accuracy_score(np.argmax(y_test, axis=1), np.argmax(y_pred, axis=1)))    
+    sum_of_batch_loss = 0
+    for i in range(total_batch):
+        start = i * batch_size
+        end = start + batch_size
+        loss_val, _, w_val, b_val = sess.run([loss, train, w2, b2], feed_dict={xp:x_train[start:end], yp:y_train[start:end]})
+        sum_of_batch_loss += loss_val / total_batch
+    print(f'epoch : {step + 1}, loss : {sum_of_batch_loss}')
+print('train complete')
+end_time = time.time()
+y_pred = sess.run(hypothesis, feed_dict={xp:x_test})
+print('acc : ', accuracy_score(np.argmax(y_test, axis=1), np.argmax(y_pred, axis=1)), 'interval time : ', end_time - strat_time)    
 
 
 

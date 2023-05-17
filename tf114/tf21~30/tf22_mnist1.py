@@ -39,7 +39,8 @@ yp = tv.placeholder(tf.float32, shape = [None, n])
 loss = tf.reduce_mean(-tf.reduce_sum(yp*tf.nn.log_softmax(hypothesis), axis=1))
 # loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=yp, logits=hypothesis))
 train = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=0.001).minimize(loss)
-    
+# loss= tf.losses.log_loss()
+
 epochs = 500
 
 sess = tv.Session()
