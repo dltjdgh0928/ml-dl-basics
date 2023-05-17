@@ -143,7 +143,7 @@ kmeans = KMeans(n_clusters=k_location, init='k-means++', max_iter=300, n_init=10
 kmeans.fit(cluster)
 centroids = kmeans.cluster_centers_
 labels = kmeans.labels_
-
+print(labels)
 
 
 

@@ -27,11 +27,12 @@ w = tf.compat.v1.Variable(tf.random.normal([4, 3]), name='weight')
 b = tf.compat.v1.Variable(tf.zeros([1, 3]), name='bias')
 y = tf.compat.v1.placeholder(tf.float32, shape=[None, 3])
 
-hypothesis = tf.nn.softmax(tf.compat.v1.matmul(x, w) + b)
+hypothesis = tf.compat.v1.matmul(x, w) + b
 
 # 3-1 컴파일
-# loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=hypothesis))
 loss = tf.reduce_mean(-tf.reduce_sum(y*tf.nn.log_softmax(hypothesis), axis=1))
+
+# loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=hypothesis))
 train = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=1e-5).minimize(loss)
 
 # 3-2. 훈련

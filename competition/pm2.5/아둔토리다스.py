@@ -256,11 +256,8 @@ k = 3
 
 kmeans = KMeans(n_clusters=k, init='k-means++', max_iter=300, n_init=10, random_state=seed)
 kmeans.fit(cluster)
+centroids = kmeans.cluster_centers_
 labels = kmeans.labels_
-print(labels)
-
-import joblib
-joblib.dump(kmeans.cluster_centers_, './_save/finedust/가중치_joblib/' + 'kmeans_joblib.joblib')
 
 print('# 2.7 Done')
 
@@ -403,8 +400,6 @@ for i in range(72):
 
 print('# 4.1 Done')
 
-date
-
 
 
 
@@ -434,8 +429,6 @@ quantization = 0.004
 l = np.round(l/quantization)*quantization
 l = l.reshape(17, -1)
 
-print('# 5.2 Done')
-
 
 # 5.3 Post-processing 2
 # train data의 2일차까지를 train data로 만든 모델을 통해 predict한 결과값을
@@ -451,7 +444,6 @@ for j in range(17):
         l[j, secondary_complement_point+72*i:tertiary_complement_point+72*i] = l[j, secondary_complement_point+72*i:tertiary_complement_point+72*i] - 2*quantization
         l[j, tertiary_complement_point+72*i:72+72*i] = l[j, tertiary_complement_point+72*i:72+72*i] - 3*quantization
 
-print('# 5.3 Done')
 
 
 
@@ -462,7 +454,7 @@ submission['PM2.5']=l
 path_save = './_save/finedust/'
 submission.to_csv(path_save + f'아둔토리다스{seed}' + date + '.csv')
 
-print('# 5.4 Done')
+print('# 5.2 Done')
 
 
 
@@ -470,5 +462,5 @@ print('# 5.4 Done')
 for i in range(72):
     globals()[f'model{i+1}'].save(f'./_save/finedust/{date}_{seed}_Submit{i+1}.h5')
 
-print('# 5.5 Done')
+print('# 5.3 Done')
 
