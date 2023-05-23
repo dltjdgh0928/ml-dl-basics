@@ -28,7 +28,7 @@ for i in range(epochs):
         w = w - lr
     elif (up_loss < down_loss):
         w = w + lr
-        
+    
     loss_list.append(loss)
     hypothesis_list.append(hypothesis)
     
