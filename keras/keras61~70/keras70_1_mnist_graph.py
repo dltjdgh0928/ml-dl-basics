@@ -1,5 +1,5 @@
 from tensorflow.keras.datasets import mnist
-from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.models import Sequential, load_model
 from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D, GlobalAveragePooling2D
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 from tensorflow.python.keras.callbacks import EarlyStopping
@@ -23,10 +23,9 @@ y_test = to_categorical(y_test)
 
 # 2. 모델구성
 model = Sequential()
-model.add(Conv2D(64, (2,2), padding='same', input_shape=(28,28,1)))
+model.add(Conv2D(2, (2,2), padding='same', input_shape=(28,28,1)))
 model.add(MaxPooling2D())
-model.add(Conv2D(64, (2,2), padding='valid', activation='relu'))
-model.add(Conv2D(32, 2))
+model.add(Conv2D(2, 2))
 # model.add(Flatten())
 model.add(GlobalAveragePooling2D())
 model.add(Dense(10, activation='softmax'))
@@ -37,8 +36,15 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
 es = EarlyStopping(monitor='val_acc', mode='min', patience=100, verbose=1, restore_best_weights=True)
 
 start = time.time()
-hist = model.fit(x_train, y_train, epochs=30, batch_size=128, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train, y_train, epochs=50, batch_size=128, validation_split=0.2, callbacks=[es])
 end = time.time()
+
+model = load_model('./_save/keras70_1_mnist_graph.h5')
+print(model)
+print(model.summary())
+hist = model.history
+print(hist)
+
 
 # 4. 평가, 예측
 result = model.evaluate(x_test, y_test)
@@ -48,9 +54,9 @@ print('acc', result[1])
 y_predict = model.predict(x_test)
 acc = accuracy_score(np.argmax(y_test,axis=1), np.argmax(y_predict,axis=1))
 print(f'acc : {acc}')
-print(f'time used : {int((end - start)//60)}m {round((end - start)%60, 3)}s')
+# print(f'time used : {int((end - start)//60)}m {round((end - start)%60, 3)}s')
 
-model.save('./_save/keras70_1_mnist_graph.h5')
+# hist = model.save('./_save/keras70_1_mnist_graph.h5')
 
 
 import matplotlib.pyplot as plt 
@@ -69,7 +75,7 @@ plt.legend(loc='upper right')
 # 2
 plt.subplot(2, 1, 2)
 plt.plot(hist.history['acc'], marker='.', c='red', label='acc')
-plt.plot(hist.history['val_acc'], marker='.', c='blue', label='val_acc')
+plt.plot(hist['val_acc'], marker='.', c='blue', label='val_acc')
 plt.grid()
 plt.title('acc')
 plt.xlabel('epochs')
