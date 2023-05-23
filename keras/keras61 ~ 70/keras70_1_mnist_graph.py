@@ -50,6 +50,9 @@ acc = accuracy_score(np.argmax(y_test,axis=1), np.argmax(y_predict,axis=1))
 print(f'acc : {acc}')
 print(f'time used : {int((end - start)//60)}m {round((end - start)%60, 3)}s')
 
+model.save('./_save/keras70_1_mnist_graph.h5')
+
+
 import matplotlib.pyplot as plt 
 plt.figure(figsize=(9, 5))
 
