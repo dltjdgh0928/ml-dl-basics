@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.datasets import cifar100
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, GlobalAveragePooling2D
 from tensorflow.keras.applications import VGG16
@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
-(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+(x_train, y_train), (x_test, y_test) = cifar100.load_data()
 print(x_train.shape)
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
@@ -49,7 +49,7 @@ for i in range(5):
         model.add(GlobalAveragePooling2D())
     
     model.add(Dense(100))
-    model.add(Dense(10, activation='softmax'))
+    model.add(Dense(100, activation='softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
     model.fit(x_train, y_train, epochs=10, batch_size=64)
