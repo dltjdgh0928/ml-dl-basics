@@ -33,7 +33,7 @@ model_list = [VGG19, Xception, ResNet50, ResNet101, InceptionV3, InceptionResNet
 
 for k in range(4):
     data = datagen.flow_from_directory(path_list[k], target_size=(target_x, target_y), batch_size=5000, class_mode='categorical', color_mode='rgb', shuffle=True)
-    x, y = data[0][0], data[0][1]  
+    x, y = data[0][0], data[0][1]
     x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=337)
     for j in range(len(model_list)):
         try:
@@ -57,7 +57,7 @@ for k in range(4):
                 
                 dense2 = Dense(100)(flat)
                 dense3 = Dense(100)(dense2) 
-                output = Dense(len(np.unique(y_train)), activation='softmax')(dense3)
+                output = Dense(y_train.shape[1], activation='softmax')(dense3)
                 
                 model = Model(inputs=input1.input, outputs=output)
                 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
