@@ -16,7 +16,7 @@ cat_dog = 'c:/_data/cat_dog/PetImages/'
 horse_human = 'c:/_data/horse_or_human/'
 rps = 'c:/_data/rps/'
 men_women = 'c:/_data/men_women/'
-v = f'c:/_data/suit/뷔.jfif'
+v = 'c:/_data/suit/뷔.jfif'
 
 target_x = 100
 target_y = 100
